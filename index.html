@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山本きんに君</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>💪 山本きんに君</h1>
+
+<div id="character">
+<svg viewBox="0 0 200 300" id="avatar" class="idle">
+
+  <!-- 髪 -->
+  <path d="M60 30 Q100 0 140 30 Q120 20 100 40 Q80 20 60 30" fill="#a89f91"/>
+
+  <!-- 頭 -->
+  <circle cx="100" cy="50" r="30" fill="#ffe0d6"/>
+
+  <!-- 目 -->
+  <ellipse id="eyeL" cx="88" cy="50" rx="5" ry="3" fill="#333"/>
+  <ellipse id="eyeR" cx="112" cy="50" rx="5" ry="3" fill="#333"/>
+
+  <!-- 口 -->
+  <path id="mouth" d="M90 65 Q100 70 110 65" stroke="#333" fill="none"/>
+
+  <!-- 胸 -->
+  <rect id="chest" x="70" y="80" width="60" height="50" rx="20" fill="#ffb6c1"/>
+
+  <!-- 腹 -->
+  <rect id="abs" x="75" y="130" width="50" height="40" rx="10" fill="#ffc0cb"/>
+
+  <!-- 腕 -->
+  <rect id="armL" x="40" y="85" width="20" height="70" rx="10" fill="#ffd6c9"/>
+  <rect id="armR" x="140" y="85" width="20" height="70" rx="10" fill="#ffd6c9"/>
+
+  <!-- 脚 -->
+  <rect id="legL" x="75" y="170" width="20" height="80" rx="10" fill="#ffd6c9"/>
+  <rect id="legR" x="105" y="170" width="20" height="80" rx="10" fill="#ffd6c9"/>
+
+</svg>
+</div>
+
+<div id="speech">がんばるぞ！</div>
+<p id="stage"></p>
+
+<div id="aura"></div>
+<div id="evolutionEffect"></div>
+
+<div class="buttons">
+  <button onclick="train('chest')">腕立て</button>
+  <button onclick="train('legs')">スクワット</button>
+  <button onclick="train('abs')">プランク</button>
+  <button onclick="train('arms')">ダンベル</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -237,7 +237,6 @@
   .title-start-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #D9521F; }
   .title-panel { display: none; }
   .title-active .title-panel { display: flex; }
-  .title-active #menuCard { display: none; }
   #resetBtnWrap { display: none; }
   .title-active #resetBtnWrap { display: block; }
   /* タイトル中は非表示にする要素（領域は保持） */
@@ -285,7 +284,6 @@
   .log-line.new { color:var(--accent); font-weight:700; }
 
   .section-title { font-weight:900; font-size:1rem; color:var(--text); padding-left:4px; }
-  #highscoreWrap .section-title { color:var(--subtext); }
   .section-title-row { display:flex; align-items:center; justify-content:space-between; }
   .menu-inner { display:flex; flex-direction:column; gap:10px; }
   .rest-btn {
@@ -320,14 +318,12 @@
   }
   .hs-score {
     flex-shrink:0;
-    font-size:1rem; font-weight:900; color:var(--subtext);
+    font-size:1rem; font-weight:900; color:var(--text);
     min-width:4.5em; text-align:right;
-    transform: translateX(-1em);
   }
   .hs-title {
-    font-size:1rem; font-weight:700; color:var(--subtext);
+    font-size:0.85rem; font-weight:700; color:var(--subtext);
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-    transform: translateX(-0.5em);
   }
   .hs-row.empty .hs-score, .hs-row.empty .hs-title { color:#D8C8BC; }
   .menu-btn {
@@ -828,16 +824,13 @@
     <div class="char-bottom-row"></div>
   </div>
 
-  <!-- タイトル画面用: 歴代上位入賞者 -->
-  <div class="menu-card" id="highscoreWrap">
-    <div class="highscore-wrap">
+  <!-- Menu -->
+  <div class="menu-card title-disabled" id="menuCard">
+    <!-- タイトル画面用: 歴代上位入賞者 -->
+    <div class="highscore-wrap" id="highscoreWrap">
       <div class="section-title">歴代上位入賞者</div>
       <div class="highscore-list" id="highscoreList"></div>
     </div>
-  </div>
-
-  <!-- Menu -->
-  <div class="menu-card title-disabled" id="menuCard">
     <!-- ゲーム画面用: トレーニングメニュー -->
     <div class="menu-inner" id="menuInner" style="display:none;">
       <div class="section-title-row">

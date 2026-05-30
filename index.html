@@ -56,9 +56,9 @@
   }
 
   .char-card {
-    background: var(--card); border-radius: 24px; padding: 16px;
+    background: var(--card); border-radius: 24px; padding: 16px 16px 0 8px;
     box-shadow: 0 8px 32px var(--shadow); border: 2px solid var(--border);
-    position: relative; overflow: hidden;
+    position: relative; overflow: visible;
   }
   .char-card::before {
     content:''; position:absolute; top:-30px; right:-30px;
@@ -79,90 +79,102 @@
     0%,100% { opacity:1; }
     50%      { opacity:0.5; }
   }
-  .char-bottom-row { display:flex; align-items:center; gap:16px; margin-top:-6px; position:relative; }
+  .char-bottom-row { display:none; }
   .char-level {
     background:var(--accent); color:white;
-    font-weight:800; font-size:0.8rem; padding:3px 10px; border-radius:20px;
-    display:flex; align-items:center; gap:4px; white-space:nowrap; flex-shrink:0;
+    font-weight:800; font-size:0.9rem; padding:3px 10px; border-radius:20px;
+    display:inline-flex; align-items:center; gap:4px; white-space:nowrap; flex-shrink:0;
+    width:fit-content;
     position:relative;
   }
-  .level-num { min-width:2.5em; text-align:right; }
+  .char-level #levelNum { min-width:1.6em; text-align:right; display:inline-block; }
   .char-area { display:flex; align-items:flex-start; gap:clamp(6px,2vw,12px); position:relative; }
-  .char-svg-wrap { flex-shrink:0; width:clamp(110px, 36vw, 150px); height:clamp(160px, 52vw, 220px); position:relative; margin-top:6px; }
-  #charSvg { width:100%; height:100%; overflow:visible; }
+  .char-svg-wrap { flex-shrink:0; width:clamp(155px, 50vw, 200px); height:clamp(160px, 52vw, 220px); position:relative; margin-top:6px; overflow:visible; transform:translateX(-45px); }
+  #charSvg { width:100%; height:100%; overflow:visible; transform:scale(1.3); transform-origin:top left; }
 
   .char-stats {
-    flex: 1;
-    min-width: 0;
+    flex: 0 0 auto;
+    width: clamp(110px, 34vw, 135px);
     margin-top: clamp(44px, 13vw, 64px);
-    margin-right: clamp(10px, 4vw, 20px);
+    margin-left: auto;
+    margin-right: clamp(2px, 1vw, 6px);
+    transform: translateX(-40px) translateY(-50px);
     display: flex;
     flex-direction: column;
     gap: clamp(5px, 1.5vw, 7px);
     position: relative;
+    overflow: visible;
   }
 
-  /* セリフ吹き出し */
-  .speech-bubble {
-    position: absolute;
-    top: clamp(6px, 2vw, 8px);
-    left: calc(clamp(110px, 36vw, 150px) - 5px);
-    right: clamp(12px, 4vw, 24px);
-    background: #FFFFFF;
-    border: 2px solid var(--accent2);
-    border-radius: 14px;
-    padding: clamp(4px, 1.5vw, 6px) clamp(8px, 2.5vw, 10px);
-    font-size: clamp(0.7rem, 2.6vw, 0.78rem);
-    font-weight: 700;
-    color: var(--accent);
-    line-height: 1.3;
-    white-space: nowrap;
-  }
-  /* 三角の尻尾(外側 = 枠線色) */
-  .speech-bubble::before {
-    content: '';
-    position: absolute;
-    left: -15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0; height: 0;
-    border-top: 6.4px solid transparent;
-    border-bottom: 6.4px solid transparent;
-    border-right: 15px solid var(--accent2);
-  }
-  /* 三角の尻尾(内側 = 背景色で上書き) */
-  .speech-bubble::after {
-    content: '';
-    position: absolute;
-    left: -10.5px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0; height: 0;
-    border-top: 4.8px solid transparent;
-    border-bottom: 4.8px solid transparent;
-    border-right: 12px solid #FFFFFF;
-  }
-  .speech-bubble.resting {
-    background: #FFFFFF;
-    border-color: var(--blue);
-    color: #0D9488;
-  }
-  .speech-bubble.resting::before { border-right-color: var(--blue); }
-  .speech-bubble.resting::after  { border-right-color: #FFFFFF; }
-  .speech-bubble.gameend {
-    background: #FFF176;
-    border-color: #F9A825;
-    color: #FFFFFF;
-    font-weight: 900;
-  }
-  .speech-bubble.gameend::before { border-right-color: #F9A825; }
-  .speech-bubble.gameend::after  { border-right-color: #FFF176; }
-  .stat-row { display:flex; flex-direction:column; gap:2px; }
-  .stat-label { font-size:0.72rem; font-weight:700; color:var(--subtext); display:flex; gap:8px; }
+  .stat-row { display:flex; flex-direction:column; gap:2px; position:relative; }
+  .stat-label { font-size:0.9rem; font-weight:700; color:var(--subtext); display:flex; gap:8px; align-items:center; }
   .stat-label span:first-child { width:2em; }
-  .stat-label span:last-child  { min-width:2.5em; text-align:right; }
-  .stat-bar { height:8px; background:transparent; border-radius:4px; overflow:hidden; }
+  .stat-label .stat-val { min-width:2.5em; text-align:right; transform: translate(-1em, 1px); }
+  .stat-star { font-size:0.65em; vertical-align:middle; transform: translate(-2em, 1px); }
+  .stat-bar { height:8px; background:transparent; border-radius:4px; overflow:hidden; width: calc(100% + 40px); position:relative; }
   .stat-fill { height:100%; border-radius:4px; transition:width 0.5s ease; }
+  /* 部位評価バッジ（リザルト時に表示） */
+  .stat-eval {
+    display:none;
+    position:absolute;
+    right:-34px;
+    bottom:-2px;
+    background:var(--accent);
+    color:white;
+    font-size:0.7rem;
+    font-weight:800;
+    padding:2px 8px;
+    border-radius:12px;
+    white-space:nowrap;
+    box-shadow:0 2px 6px rgba(255,107,53,0.4);
+    z-index:5;
+    animation:evalPop 0.4s ease backwards;
+  }
+  .stat-eval.show { display:inline-block; }
+  @keyframes evalPop {
+    from { opacity:0; transform:scale(0.6); }
+    to   { opacity:1; transform:scale(1); }
+  }
+
+  /* レベルバッジ（縦並び中の単独表示用） */
+  .char-stats > .char-level {
+    align-self: flex-start;
+    margin-bottom: 10px;
+  }
+  .char-stats > .life-inline {
+    margin-bottom: 10px;
+  }
+  .stats-top-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .stats-top-row .char-level {
+    flex-shrink: 0;
+  }
+  .stats-top-row .life-inline {
+    flex: 1;
+    min-width: 0;
+    margin-top: 0;
+    gap: 5px;
+  }
+  /* ライフバー外側コンテナ（最大値の幅を表現する親） */
+  .life-bar-outer {
+    flex: 1;
+    height: 14px;
+    background: transparent;
+    border-radius: 7px;
+    position: relative;
+  }
+  .life-inline .life-bar-wrap {
+    height: 14px;
+    background: #F0E8E0;
+    border-radius: 7px;
+    overflow: hidden;
+    position: relative;
+    transition: width 0.3s ease;
+  }
 
   /* キャラカード内のライフバー (アイコン + バーのみ) */
   .life-inline {
@@ -170,8 +182,10 @@
     align-items: center;
     gap: 8px;
     flex: 1;
+    width: calc(100% + 40px);
+    position: relative;
   }
-  .life-inline .life-icon { font-size: 1rem; line-height: 1; }
+  .life-inline .life-icon { font-size: 1.1rem; line-height: 1; }
   .life-bar-outer { flex:1; }
   .life-inline .life-bar-wrap { height: 14px; background:#F0E8E0; border-radius:7px; overflow:hidden; position:relative; transition:width 0.3s ease; }
 
@@ -179,7 +193,7 @@
   .title-panel {
     position: absolute;
     top: clamp(8px, 2.5vw, 14px);
-    left: calc(clamp(110px, 36vw, 150px) + clamp(6px, 2vw, 12px));
+    left: calc(clamp(155px, 50vw, 200px) + clamp(6px, 2vw, 12px));
     right: clamp(10px, 4vw, 20px);
     bottom: 0;
     display: flex;
@@ -217,13 +231,13 @@
     box-shadow: 0 4px 0 #D9521F;
     transition: transform 0.1s, box-shadow 0.1s;
     margin-top: 4px;
+    white-space: nowrap;
   }
   .title-start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #D9521F; }
   .title-start-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #D9521F; }
   .title-panel { display: none; }
   .title-active .title-panel { display: flex; }
   /* タイトル中は非表示にする要素（領域は保持） */
-  .title-active .speech-bubble,
   .title-active .char-stats,
   .title-active .char-bottom-row {
     visibility: hidden;
@@ -269,6 +283,7 @@
 
   .section-title { font-weight:900; font-size:1rem; color:var(--text); padding-left:4px; }
   .section-title-row { display:flex; align-items:center; justify-content:space-between; }
+  .menu-inner { display:flex; flex-direction:column; gap:10px; }
   .rest-btn {
     background:#E0F7F5; border:2px solid var(--blue); border-radius:20px;
     color:#0D9488; font-weight:800; font-size:0.8rem; padding:4px 14px;
@@ -287,6 +302,28 @@
     gap:10px;
   }
   .menu-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:clamp(4px, 1.5vw, 8px); }
+  /* 歴代上位入賞者 */
+  .highscore-wrap { display:flex; flex-direction:column; gap:12px; min-height:150px; }
+  .highscore-list { display:flex; flex-direction:column; gap:10px; padding:0 2px; }
+  .hs-row {
+    display:flex; align-items:center; gap:10px;
+    font-weight:800; color:var(--text);
+  }
+  .hs-rank {
+    flex-shrink:0;
+    font-size:1rem; font-weight:900; color:var(--accent);
+    min-width:2.4em;
+  }
+  .hs-score {
+    flex-shrink:0;
+    font-size:1rem; font-weight:900; color:var(--text);
+    min-width:4.5em; text-align:right;
+  }
+  .hs-title {
+    font-size:0.85rem; font-weight:700; color:var(--subtext);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .hs-row.empty .hs-score, .hs-row.empty .hs-title { color:#D8C8BC; }
   .menu-btn {
     background:#FFF8F0;
     border:2px solid var(--border);
@@ -320,32 +357,79 @@
 
   /* ゲーム終了後リザルト */
   .result-wrap {
-    display:flex; flex-direction:column; align-items:center; gap:10px;
-    padding:4px 0;
-    animation:resultFadeIn 0.7s ease forwards;
+    display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:8px;
+    padding:4px 4px;
+    width:100%;
+    min-height:150px;
   }
-  @keyframes resultFadeIn {
-    from { opacity:0; transform:translateY(8px); }
-    to   { opacity:1; transform:translateY(0); }
+  .result-wrap.pop {
+    animation:resultPop 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
   }
-  .result-header {
-    font-size:0.8rem; font-weight:800; color:var(--subtext); letter-spacing:3px;
+  @keyframes resultPop {
+    0%   { opacity:0; transform:scale(0.8); }
+    100% { opacity:1; transform:scale(1); }
   }
-  .result-score-label {
-    font-size:0.78rem; font-weight:700; color:var(--subtext); margin-bottom:-4px;
+  .result-score-line {
+    font-size:0.9rem; font-weight:900; color:var(--accent);
+    text-shadow:1px 2px 0 #FFE4CC;
+    display:flex; align-items:center; flex-wrap:wrap; gap:4px;
   }
-  .result-score {
-    font-size:1.8rem; font-weight:900; color:var(--accent);
+  .result-score-line .result-score-num {
+    font-size:1.7rem; color:var(--subtext); text-shadow:none;
+  }
+  .result-title-line {
+    font-size:0.9rem; font-weight:900; color:var(--accent);
     text-shadow:1px 2px 0 #FFE4CC;
   }
-  .result-score-label, .result-title-label {
-    font-size:0.72rem; font-weight:700; color:var(--subtext);
-    letter-spacing:1px; margin-bottom:-6px;
+  .result-title-line .result-title-name {
+    font-size:1.3rem; color:var(--subtext); text-shadow:none;
+  }
+  .result-rank-badge {
+    display:inline-block;
+    color:#FFFFFF;
+    font-size:1.1rem;
+    font-weight:900;
+    padding:3px 14px;
+    border-radius:20px;
+    margin-left:6px;
+    white-space:nowrap;
+    text-shadow:0 1px 2px rgba(0,0,0,0.25);
+    opacity:0;
+    transform: translate(10px, -3px);
+  }
+  .result-rank-badge.gold   { background:#E0A100; box-shadow:0 2px 10px rgba(224,161,0,0.55); }
+  .result-rank-badge.silver { background:#8E99A8; box-shadow:0 2px 10px rgba(142,153,168,0.55); }
+  .result-rank-badge.bronze { background:#B5732E; box-shadow:0 2px 10px rgba(181,115,46,0.55); }
+  .result-rank-badge.reveal {
+    opacity:1;
+  }
+  .rank-sparkle {
+    position:fixed;
+    font-size:14px;
+    pointer-events:none;
+    z-index:600;
+    transform:translate(-50%, -50%);
+    animation:rankSparkle 0.8s ease-out forwards;
+  }
+  @keyframes rankSparkle {
+    0%   { opacity:0; transform:translate(-50%, -50%) scale(0.3); }
+    35%  { opacity:1; transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.2); }
+    100% { opacity:0; transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.7); }
+  }
+  .result-parts {
+    display:flex; flex-direction:column; gap:10px;
+    font-size:1rem; font-weight:700; color:var(--text);
+  }
+  .result-part-row { display:flex; gap:18px; flex-wrap:wrap; }
+  .result-part-row .rp b { font-weight:800; }
+  .result-title-lead {
+    font-size:0.9rem; font-weight:700; color:var(--text); margin-top:6px;
   }
   .result-title {
-    font-size:1.5rem; font-weight:900; color:var(--accent);
+    font-size:1.6rem; font-weight:900; color:var(--accent);
     text-shadow:1px 2px 0 #FFE4CC;
   }
+  .title-start-btn#returnTitleBtn { align-self:center; }
 
   .total-card {
     background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:18px;
@@ -483,7 +567,7 @@
 
 <header>
   <div class="countdown" id="countdownText">
-    大会まで残り<span class="countdown-days" id="countdownDays">120</span>日！
+    大会まで残り<span class="countdown-days" id="countdownDays"></span>日！
   </div>
 </header>
 
@@ -491,7 +575,7 @@
 
   <!-- Character Card -->
   <div class="char-card">
-    <div class="char-status resting" id="charStatus">休憩中…</div>
+    <div class="char-status waiting" id="charStatus">待機中</div>
     <div class="char-area">
       <div class="char-svg-wrap" id="charWrap">
         <!--
@@ -690,66 +774,162 @@
         </svg>
       </div>
 
-      <!-- セリフ吹き出し -->
-      <div class="speech-bubble" id="speechBubble">待機中…</div>
-
       <div class="char-stats">
+        <div class="char-level" id="levelBadge">レベル <span id="levelNum">1</span></div>
+        <div class="life-inline">
+          <span class="life-icon">❤️</span>
+          <div class="life-bar-outer">
+            <div class="life-bar-wrap" id="lifeBarWrap" style="width:30%;height:100%;">
+              <div id="lifeBar" style="width:100%;height:100%;"></div>
+            </div>
+          </div>
+          <span class="stat-eval" id="eval-life"></span>
+        </div>
         <div class="stat-row">
-          <div class="stat-label"><span>むね</span><span id="v-chest">Lv.1</span></div>
+          <div class="stat-label"><span>むね</span><span class="stat-val" id="v-chest">0</span><span class="stat-star" id="star-chest"></span></div>
           <div class="stat-bar"><div class="stat-fill" id="b-chest" style="width:0%;background:linear-gradient(90deg,#FF6B35,#FFB347)"></div></div>
+          <span class="stat-eval" id="eval-chest"></span>
         </div>
         <div class="stat-row">
-          <div class="stat-label"><span>うで</span><span id="v-arm">Lv.1</span></div>
+          <div class="stat-label"><span>うで</span><span class="stat-val" id="v-arm">0</span><span class="stat-star" id="star-arm"></span></div>
           <div class="stat-bar"><div class="stat-fill" id="b-arm" style="width:0%;background:linear-gradient(90deg,#4ECDC4,#22D3EE)"></div></div>
+          <span class="stat-eval" id="eval-arm"></span>
         </div>
         <div class="stat-row">
-          <div class="stat-label"><span>はら</span><span id="v-abs">Lv.1</span></div>
+          <div class="stat-label"><span>はら</span><span class="stat-val" id="v-abs">0</span><span class="stat-star" id="star-abs"></span></div>
           <div class="stat-bar"><div class="stat-fill" id="b-abs" style="width:0%;background:linear-gradient(90deg,#C084FC,#818CF8)"></div></div>
+          <span class="stat-eval" id="eval-abs"></span>
         </div>
         <div class="stat-row">
-          <div class="stat-label"><span>あし</span><span id="v-leg">Lv.1</span></div>
+          <div class="stat-label"><span>あし</span><span class="stat-val" id="v-leg">0</span><span class="stat-star" id="star-leg"></span></div>
           <div class="stat-bar"><div class="stat-fill" id="b-leg" style="width:0%;background:linear-gradient(90deg,#4ADE80,#10B981)"></div></div>
+          <span class="stat-eval" id="eval-leg"></span>
         </div>
       </div>
 
       <!-- タイトル画面パネル -->
       <div class="title-panel" id="titlePanel">
-        <img src="icons/logo.png" alt="チョモランマ！山本くん" style="width:130%;max-width:none;margin-left:-15%;height:auto;margin-top:-58px;">
+        <img src="icons/logo.png" alt="チョモランマ！山本くん" style="width:170%;max-width:none;margin-left:-43%;height:auto;margin-top:-82px;">
         <div style="margin-left:-20px;padding-top:30px;display:flex;flex-direction:column;align-items:center;gap:inherit;">
           <div class="title-desc" style="margin-top:-20px;">
-            トレーニングを選んで<br>山本くんを鍛えよう！<br>大会まであと120日！
+            トレーニングを選んで<br>山本くんを鍛えよう！
           </div>
           <button class="title-start-btn" id="titleStartBtn">▶ スタート</button>
         </div>
       </div>
     </div>
 
-    <div class="char-bottom-row">
-      <div class="char-level" id="levelBadge"><span>レベル</span><span class="level-num" id="levelNum">1</span></div>
-      <div class="life-inline">
-        <span class="life-icon">❤️</span>
-        <div class="life-bar-outer">
-          <div class="life-bar-wrap" id="lifeBarWrap" style="width:30%">
-            <div id="lifeBar" style="width:100%"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="char-bottom-row"></div>
   </div>
 
   <!-- Menu -->
   <div class="menu-card title-disabled" id="menuCard">
-    <div class="section-title-row">
-      <div class="section-title">トレーニングメニュー</div>
-      <button class="rest-btn" id="restBtn" onclick="manualRest()">💤 きゅうけい</button>
+    <!-- タイトル画面用: 歴代上位入賞者 -->
+    <div class="highscore-wrap" id="highscoreWrap">
+      <div class="section-title">歴代上位入賞者</div>
+      <div class="highscore-list" id="highscoreList"></div>
+      <div style="text-align:right; margin-top:4px;">
+        <span id="resetBtn" onclick="onResetClick()" style="font-size:0.65rem; color:#C8B8AE; cursor:pointer; user-select:none;">データリセット</span>
+      </div>
     </div>
-    <div class="menu-grid" id="menuGrid"></div>
+    <!-- ゲーム画面用: トレーニングメニュー -->
+    <div class="menu-inner" id="menuInner" style="display:none;">
+      <div class="section-title-row">
+        <div class="section-title">トレーニングメニュー</div>
+        <button class="rest-btn" id="restBtn" onclick="manualRest()">💤 きゅうけい</button>
+      </div>
+      <div class="menu-grid" id="menuGrid"></div>
+    </div>
   </div>
 </div>
 
 <div class="popup" id="popup"></div>
 
 <script>
+// ============================================================
+// HIGH SCORE (歴代上位3位まで・永続化)
+// ============================================================
+let highscores = []; // [{score:Number, title:String}]
+let lastRank = 0;    // 直近のゲームで何位に入ったか（0=圏外）
+
+async function loadHighscores() {
+  try {
+    const res = await window.storage.get('highscores');
+    highscores = res && res.value ? JSON.parse(res.value) : [];
+  } catch (e) {
+    highscores = [];
+  }
+  renderHighscores();
+}
+
+async function saveHighscores() {
+  try {
+    await window.storage.set('highscores', JSON.stringify(highscores));
+  } catch (e) {}
+}
+
+// データリセット
+const RESET_STEPS = ['データリセット', 'データ初期化', '歴代上位入賞者を初期化します', '本当に初期化しますよ？'];
+let _resetStep = 0;
+let _resetTimer = null;
+
+function onResetClick() {
+  if (_resetTimer) { clearTimeout(_resetTimer); _resetTimer = null; }
+  _resetStep++;
+  if (_resetStep >= RESET_STEPS.length) {
+    // 実行
+    highscores = [];
+    saveHighscores();
+    renderHighscores();
+    _resetStep = 0;
+  }
+  const btn = document.getElementById('resetBtn');
+  if (btn) btn.textContent = RESET_STEPS[_resetStep];
+  // 3秒操作がなければ最初に戻す
+  _resetTimer = setTimeout(() => {
+    _resetStep = 0;
+    const b = document.getElementById('resetBtn');
+    if (b) b.textContent = RESET_STEPS[0];
+  }, 3000);
+}
+
+// 新スコアを記録。入賞したら順位(1-3)を返す。圏外なら0
+function submitScore(scoreNum, title) {
+  const entry = { score: scoreNum, title: title };
+  const list = highscores.slice();
+  list.push(entry);
+  list.sort((a, b) => b.score - a.score);
+  const top3 = list.slice(0, 3);
+  // entryが何位か（同点は先に入った方が上）
+  const rank = top3.indexOf(entry) + 1;
+  highscores = top3;
+  saveHighscores();
+  return rank;
+}
+
+function renderHighscores() {
+  const el = document.getElementById('highscoreList');
+  if (!el) return;
+  let html = '';
+  for (let i = 0; i < 3; i++) {
+    const hs = highscores[i];
+    if (hs) {
+      html += `<div class="hs-row">
+        <span class="hs-rank">${i + 1}位</span>
+        <span class="hs-score">${hs.score.toLocaleString()}点</span>
+        <span class="hs-title">${hs.title}</span>
+      </div>`;
+    } else {
+      html += `<div class="hs-row empty">
+        <span class="hs-rank">${i + 1}位</span>
+        <span class="hs-score">―</span>
+        <span class="hs-title">―</span>
+      </div>`;
+    }
+  }
+  el.innerHTML = html;
+}
+
 // ============================================================
 // MENUS
 // ============================================================
@@ -813,10 +993,17 @@ function stopSpeechLoop() {
 }
 
 // ============================================================
+// CONSTANTS
+// ============================================================
+const MAX_STAT_VAL = 200.0;
+const TOTAL_DAYS = 100; // 制限時間(秒) = 大会までの日数
+const INITIAL_BONUS_POINTS = 30;
+
+// ============================================================
 // STATE
 // ============================================================
 const state = {
-  life:300, maxLife:300,
+  life:400, maxLife:400,
   resting:false, down:false, levelUpFreeze:false, activeMenu:null,
   ticker:null, restTicker:null, passiveTicker:null, passiveTicker:null,
   totalReps:0,
@@ -836,20 +1023,19 @@ const state = {
   },
   conditionTicker:null,
   // ゲーム時間: 120秒(=120日)からカウントダウン
-  daysLeft: 120,
+  daysLeft: TOTAL_DAYS,
   gameOver: false,
   gameStarted: false, // タイトル画面 → false / ゲーム中 → true
   gameTicker: null,
+  superFavStat: null,
+  favStat: null,
 };
-const MAX_STAT_VAL = 200.0;
-const TOTAL_DAYS = 120; // 制限時間(秒) = 大会までの日数
-
 // ============================================================
 // DOM
 // ============================================================
 const lifeBar      = document.getElementById('lifeBar');
 const lifeBarWrap  = document.getElementById('lifeBarWrap');
-const speechBubble = document.getElementById('speechBubble');
+const speechBubble = { className: '', textContent: '' };
 const levelBadge   = document.getElementById('levelBadge');
 const popup        = document.getElementById('popup');
 const charWrap     = document.getElementById('charWrap');
@@ -1104,7 +1290,7 @@ function updateStatBars() {
 // ============================================================
 function calcLevel() {
   const total = Object.values(state.stats).reduce((a, v) => a + v, 0);
-  return Math.floor(total / 50) + 1;
+  return Math.floor(Math.max(0, total - INITIAL_BONUS_POINTS) / 50) + 1;
 }
 
 function generateTitle() {
@@ -1158,22 +1344,134 @@ function generateResultComment(s, total) {
   return 'トレーニングの第一歩を踏み出した！次はもっとやり込もう！';
 }
 
+// 部位ごとの値→一言コメント
+function partComment(val) {
+  if (val >= 100) return '宇宙レベル';
+  if (val >= 90) return '神々しい';
+  if (val >= 80) return 'ほぼゴリラ';
+  if (val >= 70) return 'デカい！';
+  if (val >= 60) return 'キレてる！';
+  if (val >= 50) return 'いい感じ';
+  if (val >= 40) return 'まだ細い';
+  return 'ガリガリ';
+}
+
+function getLifeRatio() {
+  return Math.round(state.life / state.maxLife * 1000) / 10; // 0.0〜100.0
+}
+
+function getLifeScore() {
+  return Math.floor(getLifeRatio() * calcLevel());
+}
+
+function getLifeComment() {
+  const ratio = getLifeRatio();
+  if (ratio >= 90) return '仕上り完璧';
+  if (ratio >= 80) return 'バリバリ！';
+  if (ratio >= 70) return 'いいバルク';
+  if (ratio >= 60) return '整ってる';
+  if (ratio >= 40) return '悪くないね';
+  return 'げっそり';
+}
+
 function showResultCard() {
-  const total = Object.values(state.stats).reduce((a, v) => a + v, 0);
-  const score = Math.floor(total * 10).toLocaleString();
-  const title = generateTitle();
-  document.querySelector('.menu-card').innerHTML = `
-    <div class="result-wrap">
-      <div class="result-header">－ 審査結果 －</div>
-      <div class="result-score-label">総合評価</div>
-      <div class="result-score">${score}点</div>
-      <div class="result-title-label">称号</div>
-      <div class="result-title">${title}山本くん</div>
-      <button class="title-start-btn" id="returnTitleBtn" style="margin-top:14px">▶ タイトルに戻る</button>
-    </div>`;
-  document.getElementById('returnTitleBtn').addEventListener('click', () => {
-    location.reload();
-  });
+  const s = state.stats;
+  const evalColors = { chest:'#FF6B35', arm:'#4ECDC4', abs:'#C084FC', leg:'#22C55E' };
+  const order = ['chest', 'arm', 'abs', 'leg'];
+
+  // 結果カード枠は最初は空白にしておく
+  document.querySelector('.menu-card').innerHTML = `<div class="result-wrap" id="resultWrap"></div>`;
+
+  // 部位評価を上から順に表示：むね(1s後) → うで → はら → あし(各0.5s間隔)
+  function showEval(i) {
+    if (i >= order.length) {
+      // あし表示の1秒後に審査結果をどんと出す
+      setTimeout(showFinalResult, 1000);
+      return;
+    }
+    const cat = order[i];
+    const el = document.getElementById('eval-' + cat);
+    if (el) {
+      el.textContent = partComment(s[cat]);
+      el.style.background = evalColors[cat];
+      el.style.animationDelay = '0s';
+      el.classList.add('show');
+    }
+    setTimeout(() => showEval(i + 1), 500);
+  }
+
+  function showFinalResult() {
+    const total = Object.values(state.stats).reduce((a, v) => a + v, 0);
+    const lifeScore = getLifeScore();
+    const scoreNum = Math.floor(total * 10) + lifeScore;
+    const score = scoreNum.toLocaleString();
+    const title = generateTitle();
+    const fullTitle = title + '山本くん';
+    // ハイスコア登録
+    const rank = submitScore(scoreNum, fullTitle);
+    renderHighscores();
+    const rankNumFull = ['', '１', '２', '３'][rank] || rank;
+    const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : 'bronze';
+    const rankBadge = rank > 0
+      ? `<span class="result-rank-badge ${rankClass}" id="rankBadge">歴代${rankNumFull}位 !!</span>`
+      : '';
+    const wrap = document.getElementById('resultWrap');
+    if (!wrap) return;
+    wrap.innerHTML = `
+      <div class="result-score-line">評価　<span class="result-score-num">${score}</span><span style="color:var(--subtext);font-size:1rem;"> 点</span> ${rankBadge}</div>
+      <div class="result-title-line">称号　<span class="result-title-name">${fullTitle}</span></div>
+      <button class="title-start-btn" id="returnTitleBtn" style="margin-top:10px;align-self:center;">▶ タイトルに戻る</button>`;
+    document.getElementById('returnTitleBtn').addEventListener('click', () => {
+      location.reload();
+    });
+    wrap.classList.add('pop');
+
+    // 入賞バッジは点数が出た後に「ポン！キラキラっ」と遅れて表示
+    if (rank > 0) {
+      const badge = document.getElementById('rankBadge');
+      if (badge) {
+        setTimeout(() => {
+          badge.classList.add('reveal');
+          spawnRankSparkles(badge);
+        }, 650);
+      }
+    }
+  }
+
+  // 入賞バッジ周囲にキラキラを飛ばす
+  function spawnRankSparkles(target) {
+    const rect = target.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    for (let i = 0; i < 6; i++) {
+      const sp = document.createElement('div');
+      sp.className = 'rank-sparkle';
+      sp.textContent = '✨';
+      const angle = (i / 6) * Math.PI * 2 + Math.random() * 0.5;
+      const dist = 22 + Math.random() * 14;
+      sp.style.left = cx + 'px';
+      sp.style.top = cy + 'px';
+      sp.style.setProperty('--dx', (Math.cos(angle) * dist).toFixed(1) + 'px');
+      sp.style.setProperty('--dy', (Math.sin(angle) * dist).toFixed(1) + 'px');
+      sp.style.animationDelay = (i * 30) + 'ms';
+      document.body.appendChild(sp);
+      setTimeout(() => sp.remove(), 900);
+    }
+  }
+
+  // トレーニング終了表示が消えてから1秒後にライフ評価→部位評価の順で表示
+  setTimeout(() => {
+    const lifeScore = getLifeScore();
+    const el = document.getElementById('eval-life');
+    if (el) {
+      el.textContent = getLifeComment();
+      el.style.background = '#EF4444';
+      el.style.right = '6px';
+      el.style.animationDelay = '0s';
+      el.classList.add('show');
+    }
+    setTimeout(() => showEval(0), 500);
+  }, 1000);
 }
 
 let _prevLevel = 1;
@@ -1217,14 +1515,15 @@ function showLevelUpScreen(prevLv, lv, prevMaxLife) {
 
   // 人体モデルとライフバーをオーバーレイより前面に
   charWrap.style.zIndex = '501';
-  const charBottomRow = document.querySelector('.char-bottom-row');
+  const charBottomRow = document.querySelector('.char-stats');
   charBottomRow.style.zIndex = '501';
 
-  // バナーを char-stats の中央に円形で fixed 配置
+  // バナーを char-stats の下寄りに配置（上部のレベル・ライフバーが見えるよう）
   const statsRect = document.querySelector('.char-stats').getBoundingClientRect();
   const circleSize = Math.min(statsRect.width, statsRect.height) * 1.05;
   const cx = statsRect.left + statsRect.width / 2;
-  const cy = statsRect.top + statsRect.height / 2;
+  // 中央より下にずらして、上部のレベルバッジ・ライフバーを隠さない
+  const cy = statsRect.top + statsRect.height * 0.62 + 10;
   const banner = document.createElement('div');
   banner.className = 'levelup-banner';
   banner.style.cssText = `position:fixed; left:${(cx - circleSize/2).toFixed(0)}px; top:${(cy - circleSize/2).toFixed(0)}px; width:${circleSize.toFixed(0)}px; height:${circleSize.toFixed(0)}px; z-index:502;`;
@@ -1276,7 +1575,7 @@ function updateLevel() {
   const lv = calcLevel();
   document.getElementById('levelNum').textContent = lv;
   const prevMaxLife = state.maxLife;
-  state.maxLife = Math.min(1000, 300 + (lv - 1) * 140);
+  state.maxLife = Math.min(1000, 400 + (lv - 1) * 150);
   if (lv > _prevLevel) {
     // level-up: 即座に freeze してタイマー干渉を防ぐ。バー更新はアニメーション側に任せる
     state.levelUpFreeze = true;
@@ -1338,7 +1637,7 @@ function doRep(menu) {
   state.life = Math.max(0, state.life - lifeCost);
 
   const lv = calcLevel();
-  const levelBoost = 1 + Math.min(lv - 1, 9) / 9; // Lv1→×1.0、Lv10以上→×2.0
+  const levelBoost = Math.min(2.0, 1.0 + (lv - 1) * 0.2); // Lv1→×1.0、Lv6以上→×2.0
 
   const prevFloor = {};
   ['chest', 'arm', 'abs', 'leg'].forEach(stat => { prevFloor[stat] = Math.floor(state.stats[stat]); });
@@ -1347,7 +1646,7 @@ function doRep(menu) {
     const cur = state.stats[g.stat];
     const statDecay = Math.max(0.20, 1.0 - 0.8 * cur / 100);
     const cond = state.conditions[g.stat];
-    const condMod = cond === 'good' ? 2.0 : cond === 'bad' ? 0.5 : 1.0;
+    const condMod = cond === 'good' ? 1.5 : cond === 'bad' ? 0.5 : 1.0;
     const base = g.min + Math.random() * (g.max - g.min);
     const amount = parseFloat((base * statDecay * levelBoost * condMod).toFixed(1));
     state.stats[g.stat] = parseFloat(Math.min(MAX_STAT_VAL, cur + amount).toFixed(1));
@@ -1357,6 +1656,17 @@ function doRep(menu) {
     const extra = parseFloat((Math.random() * 0.3).toFixed(1));
     state.stats[stat] = parseFloat(Math.min(MAX_STAT_VAL, state.stats[stat] + extra).toFixed(1));
   });
+
+  // 超得意・得意ボーナス（そのトレーニングで上がる部位のみ）
+  const gainStats = menu.gains.map(g => g.stat);
+  if (state.superFavStat && gainStats.includes(state.superFavStat)) {
+    const b = parseFloat((0.6 + Math.random() * 0.9).toFixed(1));
+    state.stats[state.superFavStat] = parseFloat(Math.min(MAX_STAT_VAL, state.stats[state.superFavStat] + b).toFixed(1));
+  }
+  if (state.favStat && gainStats.includes(state.favStat)) {
+    const b = parseFloat((0.1 + Math.random() * 0.9).toFixed(1));
+    state.stats[state.favStat] = parseFloat(Math.min(MAX_STAT_VAL, state.stats[state.favStat] + b).toFixed(1));
+  }
 
   // どのstatが好調/不調状態だったかを記録
   const goodGain = { chest:false, arm:false, abs:false, leg:false };
@@ -1599,10 +1909,10 @@ function spawnFloat(text, parent) {
 
 // 部位ごとの表示位置 (charWrap内 %, %) と色
 const STAT_FLOAT_STYLE = {
-  chest: { xPct: 48, yPct: 30, color: '#FF6B35' },
-  arm:   { xPct: 12, yPct: 37, color: '#4ECDC4' },
-  abs:   { xPct: 48, yPct: 44, color: '#C084FC' },
-  leg:   { xPct: 38, yPct: 62, color: '#4ADE80' },
+  chest: { xPct: 62, yPct: 38, color: '#FF6B35' },
+  arm:   { xPct: 28, yPct: 47, color: '#4ECDC4' },
+  abs:   { xPct: 62, yPct: 56, color: '#C084FC' },
+  leg:   { xPct: 52, yPct: 80, color: '#4ADE80' },
 };
 
 function spawnStatFloat(text, stat, isGood = false, isBad = false) {
@@ -1617,21 +1927,7 @@ function spawnStatFloat(text, stat, isGood = false, isBad = false) {
   el.style.top  = (h * s.yPct / 100 + (Math.random() * 10 - 5)) + 'px';
   charWrap.appendChild(el);
 
-  // 好調時はキラキラ✨を周囲に追加
-  if (isGood) {
-    for (let i = 0; i < 4; i++) {
-      const sp = document.createElement('div');
-      sp.className = 'float-sparkle';
-      sp.textContent = '✨';
-      const angle = (i / 4) * Math.PI * 2 + Math.random() * 0.4;
-      const dist = 14 + Math.random() * 8;
-      sp.style.left = (w * s.xPct / 100 + Math.cos(angle) * dist) + 'px';
-      sp.style.top  = (h * s.yPct / 100 + Math.sin(angle) * dist) + 'px';
-      sp.style.animationDelay = (i * 50) + 'ms';
-      charWrap.appendChild(sp);
-      setTimeout(() => sp.remove(), 900);
-    }
-  }
+
 
 
 
@@ -1744,53 +2040,52 @@ function makeGoodElements(cat) {
 
   const zone = CAT_ZONES[cat];
 
-  const GOOD_EMOJIS = ['✨'];
   zone.areas.forEach((area, ai) => {
-    // 各エリアに3つのキラキラを生成
-    for (let si = 0; si < 1; si++) {
-      const el = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      el.setAttribute('font-size', '18');
-      el.setAttribute('text-anchor', 'middle');
-      el.setAttribute('x', '0');
-      el.setAttribute('y', '0');
-      el.style.opacity = '0';
-      el.textContent = GOOD_EMOJIS[si % GOOD_EMOJIS.length];
-      g.appendChild(el);
+    const el = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    el.setAttribute('font-size', '16');
+    el.setAttribute('text-anchor', 'middle');
+    el.setAttribute('x', '0');
+    el.setAttribute('y', '0');
+    el.style.opacity = '0';
+    el.textContent = '🔥';
+    g.appendChild(el);
 
-      function randomPos(elem, a) {
-        const [cx, cy, rx, ry] = a;
-        elem.setAttribute('x', (cx + (Math.random() * 2 - 1) * rx).toFixed(1));
-        elem.setAttribute('y', (cy + (Math.random() * 2 - 1) * ry).toFixed(1));
-      }
+    (function makeLoop(elem) {
+      function cycle() {
+        if (document.getElementById('fx-' + cat + '-good') !== g) return;
+        const [cx, cy, rx, ry] = area;
+        const startX    = cx + (Math.random() * 2 - 1) * rx * 0.7;
+        const startY    = cy + ry * 0.6 + Math.random() * 4;
+        const rise      = 12 + Math.random() * 6;
+        const startSize = 13;
+        const endSize   = 24;
+        const dur       = 700 + Math.random() * 200;
+        elem.setAttribute('x', startX.toFixed(1));
+        elem.setAttribute('y', startY.toFixed(1));
+        elem.setAttribute('font-size', startSize);
 
-      function animate(elem, fromOp, toOp, dur, onDone) {
         let start = null;
         function tick(ts) {
           if (!start) start = ts;
           const p = Math.min((ts - start) / dur, 1);
-          elem.style.opacity = (fromOp + (toOp - fromOp) * p).toFixed(3);
-          if (p < 1) requestAnimationFrame(tick);
-          else onDone();
+          // フェードイン素早く(0→1 前半20%)、ゆっくりフェードアウト(後半80%)
+          const op = p < 0.2 ? (p / 0.2) * 0.8 : 0.8 * (1 - (p - 0.2) / 0.8);
+          elem.style.opacity = Math.max(0, op).toFixed(3);
+          // 上昇しながら大きくなる
+          elem.setAttribute('y', (startY - rise * p).toFixed(1));
+          elem.setAttribute('font-size', (startSize + (endSize - startSize) * p).toFixed(1));
+          if (p < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            const tid = setTimeout(cycle, 100 + Math.random() * 300);
+            g._goodTimers.push(tid);
+          }
         }
         requestAnimationFrame(tick);
       }
-
-      (function makeLoop(elem) {
-        function cycle() {
-          if (document.getElementById('fx-' + cat + '-good') !== g) return;
-          randomPos(elem, area);
-          // フェードイン → フェードアウト → 待機 → 繰り返し
-          animate(elem, 0, 1, 300, () => {
-            animate(elem, 1, 0, 500, () => {
-              const tid = setTimeout(cycle, 300 + Math.random() * 500);
-              g._goodTimers.push(tid);
-            });
-          });
-        }
-        const tid = setTimeout(cycle, (ai * 3 + si) * 300);
-        g._goodTimers.push(tid);
-      })(el);
-    }
+      const tid = setTimeout(cycle, ai * 400);
+      g._goodTimers.push(tid);
+    })(el);
   });
 }
 
@@ -1913,8 +2208,9 @@ function startGameTimer() {
     countdownDaysEl.textContent = state.daysLeft;
     if (state.daysLeft <= 0) {
       state.daysLeft = 0;
-      // 「大会まで残り0日！」ではなく「大会当日！」に差し替え
-      document.getElementById('countdownText').textContent = '大会当日！';
+      // 「大会まで残り0日！」→「大会当日！」をspanのサイズ維持で表示
+      const ct = document.getElementById('countdownText');
+      ct.innerHTML = '<span class="countdown-days">大 会 当 日</span>';
       gameEnd();
     }
   }, 1000);
@@ -1948,7 +2244,7 @@ function gameEnd() {
     b.classList.add('disabled');
   });
   setStatusText('結果発表！', 'gameend');
-  speechBubble.className = 'speech-bubble gameend';
+  speechBubble.className = 'speech-bubble';
   speechBubble.textContent = '結果発表！';
   showGameEndScreen();
 }
@@ -1963,13 +2259,13 @@ function showGameEndScreen() {
   document.body.appendChild(overlay);
 
   charWrap.style.zIndex = '501';
-  const charBottomRow = document.querySelector('.char-bottom-row');
+  const charBottomRow = document.querySelector('.char-stats');
   charBottomRow.style.zIndex = '501';
 
   const statsRect = document.querySelector('.char-stats').getBoundingClientRect();
   const circleSize = Math.min(statsRect.width, statsRect.height) * 1.05;
   const cx = statsRect.left + statsRect.width / 2;
-  const cy = statsRect.top + statsRect.height / 2;
+  const cy = statsRect.top + statsRect.height * 0.62 + 10;
   const banner = document.createElement('div');
   banner.className = 'levelup-banner gameend';
   banner.style.cssText = `position:fixed; left:${(cx - circleSize/2).toFixed(0)}px; top:${(cy - circleSize/2).toFixed(0)}px; width:${circleSize.toFixed(0)}px; height:${circleSize.toFixed(0)}px; z-index:502;`;
@@ -2006,7 +2302,7 @@ function startCountdown(onDone) {
   const statsRect = document.querySelector('.char-stats').getBoundingClientRect();
   const circleSize = Math.min(statsRect.width, statsRect.height) * 1.05;
   const cx = statsRect.left + statsRect.width / 2;
-  const cy = statsRect.top + statsRect.height / 2;
+  const cy = statsRect.top + statsRect.height * 0.62 + 10;
 
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:501; pointer-events:none;';
@@ -2046,12 +2342,47 @@ function beginGame() {
   startConditionSystem();
 }
 
+function assignFavStats() {
+  const keys = ['chest', 'arm', 'abs', 'leg'];
+  const shuffled = keys.slice().sort(() => Math.random() - 0.5);
+  state.superFavStat = shuffled[0];
+  state.favStat = shuffled[1];
+  updateFavStarDisplay();
+}
+
+function updateFavStarDisplay() {
+  ['chest', 'arm', 'abs', 'leg'].forEach(k => {
+    const el = document.getElementById('star-' + k);
+    if (!el) return;
+    if (k === state.superFavStat)    el.textContent = '⭐⭐';
+    else if (k === state.favStat)    el.textContent = '⭐';
+    else                             el.textContent = '';
+  });
+}
+
+function applyInitialBonus() {
+  const keys = ['chest', 'arm', 'abs', 'leg'];
+  const min = 1;
+  const vals = keys.map(() => min);
+  let remaining = INITIAL_BONUS_POINTS - keys.length * min;
+  for (let i = 0; i < remaining; i++) {
+    vals[Math.floor(Math.random() * keys.length)]++;
+  }
+  keys.forEach((k, i) => { state.stats[k] = vals[i]; });
+  updateStatBars();
+}
+
 document.getElementById('titleStartBtn').addEventListener('click', () => {
   // タイトル画面を解除するがメニューはカウントダウン中はまだ無効
   document.body.classList.remove('title-active');
   document.getElementById('menuCard').classList.add('title-disabled'); // 引き続きグレーアウト
+  // 歴代上位入賞者の表示を消して、トレーニングメニューに切り替え
+  document.getElementById('highscoreWrap').style.display = 'none';
+  document.getElementById('menuInner').style.display = 'flex';
   // カウントダウン終了後にメニュー解除 & タイマースタート
   startCountdown(() => {
+    assignFavStats();
+    applyInitialBonus();
     document.getElementById('menuCard').classList.remove('title-disabled');
     state.gameStarted = true;
     startGameTimer();
@@ -2062,8 +2393,10 @@ document.getElementById('titleStartBtn').addEventListener('click', () => {
 // ============================================================
 // INIT — render at zero stats (ヒョロヒョロ)
 // ============================================================
+countdownDaysEl.textContent = state.daysLeft;
 updateLifeBar();
 updateStatBars();
+loadHighscores();
 // タイトル画面表示中。タイマーはスタートボタン押下後に開始される。
 </script>
 </body>

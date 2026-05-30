@@ -237,6 +237,8 @@
   .title-start-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #D9521F; }
   .title-panel { display: none; }
   .title-active .title-panel { display: flex; }
+  #resetBtnWrap { display: none; }
+  .title-active #resetBtnWrap { display: block; }
   /* タイトル中は非表示にする要素（領域は保持） */
   .title-active .char-stats,
   .title-active .char-bottom-row {
@@ -828,9 +830,6 @@
     <div class="highscore-wrap" id="highscoreWrap">
       <div class="section-title">歴代上位入賞者</div>
       <div class="highscore-list" id="highscoreList"></div>
-      <div style="text-align:right; margin-top:4px;">
-        <span id="resetBtn" onclick="onResetClick()" style="font-size:0.65rem; color:#C8B8AE; cursor:pointer; user-select:none;">データリセット</span>
-      </div>
     </div>
     <!-- ゲーム画面用: トレーニングメニュー -->
     <div class="menu-inner" id="menuInner" style="display:none;">
@@ -840,6 +839,9 @@
       </div>
       <div class="menu-grid" id="menuGrid"></div>
     </div>
+  </div>
+  <div style="text-align:right; margin-top:2px;" id="resetBtnWrap">
+    <span id="resetBtn" onclick="onResetClick()" style="font-size:0.80rem; color:#C8B8AE; cursor:pointer; user-select:none;">データ初期化</span>
   </div>
 </div>
 
@@ -852,24 +854,24 @@
 let highscores = []; // [{score:Number, title:String}]
 let lastRank = 0;    // 直近のゲームで何位に入ったか（0=圏外）
 
-async function loadHighscores() {
+function loadHighscores() {
   try {
-    const res = await window.storage.get('highscores');
-    highscores = res && res.value ? JSON.parse(res.value) : [];
+    const data = localStorage.getItem('muscle_yamamoto_highscores');
+    highscores = data ? JSON.parse(data) : [];
   } catch (e) {
     highscores = [];
   }
   renderHighscores();
 }
 
-async function saveHighscores() {
+function saveHighscores() {
   try {
-    await window.storage.set('highscores', JSON.stringify(highscores));
+    localStorage.setItem('muscle_yamamoto_highscores', JSON.stringify(highscores));
   } catch (e) {}
 }
 
 // データリセット
-const RESET_STEPS = ['データリセット', 'データ初期化', '歴代上位入賞者を初期化します', '本当に初期化しますよ？'];
+const RESET_STEPS = ['データ初期化', '歴代上位入賞者を初期化します', '本当に初期化しますよ？'];
 let _resetStep = 0;
 let _resetTimer = null;
 
@@ -882,6 +884,13 @@ function onResetClick() {
     saveHighscores();
     renderHighscores();
     _resetStep = 0;
+    const btn = document.getElementById('resetBtn');
+    if (btn) {
+      btn.textContent = '初期化しました';
+      btn.style.cursor = 'default';
+      btn.style.pointerEvents = 'none';
+    }
+    return;
   }
   const btn = document.getElementById('resetBtn');
   if (btn) btn.textContent = RESET_STEPS[_resetStep];
@@ -889,7 +898,7 @@ function onResetClick() {
   _resetTimer = setTimeout(() => {
     _resetStep = 0;
     const b = document.getElementById('resetBtn');
-    if (b) b.textContent = RESET_STEPS[0];
+    if (b) b.textContent = RESET_STEPS[0]; // 「データ初期化」に戻る
   }, 3000);
 }
 

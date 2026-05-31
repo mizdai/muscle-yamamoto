@@ -113,6 +113,14 @@
   .stat-star { font-size:0.65em; vertical-align:middle; transform: translate(-2em, 1px); }
   .stat-bar { height:8px; background:transparent; border-radius:4px; overflow:hidden; width: calc(100% + 40px); position:relative; }
   .stat-fill { height:100%; border-radius:4px; transition:width 0.5s ease; }
+  @keyframes svgPartGlow {
+    0%   { filter: brightness(1)    saturate(1); }
+    30%  { filter: brightness(1.2) saturate(1); }
+    100% { filter: brightness(1)    saturate(1); }
+  }
+  .svg-glow {
+    animation: svgPartGlow 0.8s ease-out forwards;
+  }
   /* 部位評価バッジ（リザルト時に表示） */
   .stat-eval {
     display:none;
@@ -247,8 +255,9 @@
   .title-active #charStatus {
     visibility: hidden;
   }
-  /* タイトル中のメニューカードはグレーアウト */
-  .menu-card.title-disabled {
+  /* タイトル中はメニューボタンのみグレーアウト */
+  .menu-card.title-disabled .menu-btn,
+  .menu-card.title-disabled .rest-btn {
     opacity: 0.45;
     filter: grayscale(0.5);
     pointer-events: none;
@@ -284,6 +293,8 @@
   .log-line.new { color:var(--accent); font-weight:700; }
 
   .section-title { font-weight:900; font-size:1rem; color:var(--text); padding-left:4px; }
+  #highscoreWrap .section-title { color:var(--subtext); text-align:center; padding-left:0; }
+  #menuCard .section-title { color:var(--subtext); }
   .section-title-row { display:flex; align-items:center; justify-content:space-between; }
   .menu-inner { display:flex; flex-direction:column; gap:10px; }
   .rest-btn {
@@ -313,16 +324,23 @@
   }
   .hs-rank {
     flex-shrink:0;
-    font-size:1rem; font-weight:900; color:var(--accent);
-    min-width:2.4em;
+    display:inline-block;
+    font-size:0.9rem; font-weight:900; color:#fff;
+    padding:2px 10px; border-radius:14px;
+    text-shadow:0 1px 2px rgba(0,0,0,0.25);
+    white-space:nowrap;
   }
+  .hs-rank.gold   { background:#E0A100; box-shadow:0 2px 8px rgba(224,161,0,0.55); }
+  .hs-rank.silver { background:#8E99A8; box-shadow:0 2px 8px rgba(142,153,168,0.55); }
+  .hs-rank.bronze { background:#B5732E; box-shadow:0 2px 8px rgba(181,115,46,0.55); }
   .hs-score {
     flex-shrink:0;
-    font-size:1rem; font-weight:900; color:var(--text);
+    font-size:1rem; font-weight:900; color:var(--subtext);
     min-width:4.5em; text-align:right;
+    transform: translateX(-0.5em);
   }
   .hs-title {
-    font-size:0.85rem; font-weight:700; color:var(--subtext);
+    font-size:1rem; font-weight:700; color:var(--subtext);
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
   .hs-row.empty .hs-score, .hs-row.empty .hs-title { color:#D8C8BC; }
@@ -355,7 +373,7 @@
     object-fit: contain;
     display: block;
   }
-  .menu-name { font-weight:800; font-size:clamp(0.7rem, 2.5vw, 0.85rem); color:var(--text); }
+  .menu-name { font-weight:800; font-size:clamp(0.7rem, 2.5vw, 0.85rem); color:var(--subtext); }
 
   /* ゲーム終了後リザルト */
   .result-wrap {
@@ -616,35 +634,36 @@
             </radialGradient>
           </defs>
 
-          <g fill="#F0C898" stroke="none">
-
-            <!-- 太もも (付け根が内側・膝が外側=ハの字) -->
+          <!-- 脚ベース -->
+          <g id="base-leg-group" fill="#F0C898" stroke="none">
             <ellipse cx="38" cy="133" rx="8" ry="20" transform="rotate(12 38 133)"/>
             <ellipse cx="62" cy="133" rx="8" ry="20" transform="rotate(-12 62 133)"/>
-
-            <!-- ふくらはぎ (太ももと重なるよう上に・角度もハの字) -->
             <ellipse cx="32" cy="166" rx="6.4" ry="20" transform="rotate(4 32 166)"/>
             <ellipse cx="68" cy="166" rx="6.4" ry="20" transform="rotate(-4 68 166)"/>
+          </g>
 
-            <!-- 前腕 (上腕の延長で外側へ・肘で繋がる位置) -->
+          <!-- 腕ベース -->
+          <g id="base-arm-group" fill="#F0C898" stroke="none">
             <ellipse cx="6" cy="99" rx="5.6" ry="16" transform="rotate(10 6 99)"/>
             <ellipse cx="94" cy="99" rx="5.6" ry="16" transform="rotate(-10 94 99)"/>
-
-            <!-- 上腕 (肩は内側=胴体に重なる・肘が外側へ広がる45度) -->
             <ellipse cx="18" cy="75" rx="5.6" ry="17" transform="rotate(45 18 75)"/>
             <ellipse cx="82" cy="75" rx="5.6" ry="17" transform="rotate(-45 82 75)"/>
+          </g>
 
-            <!-- 胴体 (胸が広く・腰が狭い逆台形シルエット) -->
-            <path d="M33,57
-                     Q50,54 67,57
-                     L60,108
-                     Q50,113 40,108 Z"/>
+          <!-- 腹ベース（胸の下に潜る） -->
+          <g id="base-abs-group" fill="#F0C898" stroke="none">
+            <path d="M36,79 L64,79 L60,108 Q50,113 40,108 Z"/>
+          </g>
 
-            <!-- 肩のふくらみ -->
+          <!-- 胸ベース（腹の前面） -->
+          <g id="base-chest-group" fill="#F0C898" stroke="none">
+            <path d="M33,57 Q50,54 67,57 L63.6,82 L36.4,82 Z"/>
+          </g>
+
+          <!-- 肩・首ベース -->
+          <g id="base-shoulder-group" fill="#F0C898" stroke="none">
             <ellipse cx="32" cy="64" rx="9" ry="6"/>
             <ellipse cx="68" cy="64" rx="9" ry="6"/>
-
-            <!-- 首 -->
             <ellipse cx="50" cy="50" rx="5.6" ry="7"/>
           </g>
 
@@ -828,7 +847,7 @@
   <div class="menu-card title-disabled" id="menuCard">
     <!-- タイトル画面用: 歴代上位入賞者 -->
     <div class="highscore-wrap" id="highscoreWrap">
-      <div class="section-title">歴代上位入賞者</div>
+      <div class="section-title">－　歴代上位入賞者　－</div>
       <div class="highscore-list" id="highscoreList"></div>
     </div>
     <!-- ゲーム画面用: トレーニングメニュー -->
@@ -920,17 +939,19 @@ function renderHighscores() {
   const el = document.getElementById('highscoreList');
   if (!el) return;
   let html = '';
+  const rankClasses = ['gold', 'silver', 'bronze'];
   for (let i = 0; i < 3; i++) {
     const hs = highscores[i];
+    const rc = rankClasses[i];
     if (hs) {
       html += `<div class="hs-row">
-        <span class="hs-rank">${i + 1}位</span>
+        <span class="hs-rank ${rc}">${i + 1}位</span>
         <span class="hs-score">${hs.score.toLocaleString()}点</span>
         <span class="hs-title">${hs.title}</span>
       </div>`;
     } else {
       html += `<div class="hs-row empty">
-        <span class="hs-rank">${i + 1}位</span>
+        <span class="hs-rank ${rc}">${i + 1}位</span>
         <span class="hs-score">―</span>
         <span class="hs-title">―</span>
       </div>`;
@@ -1090,9 +1111,12 @@ function lerpColor(a, b, t) {
 // ============================================================
 // 筋肉サイズ用比率（レベルアップ時のみ使用）
 function muscleR(val) {
-  if (val <= 100) return val / 100;
-  if (val <= 130) return 1.0 + (val - 100) / 300;
-  return 1.1;
+  if (val <= 70) return val / 100;
+  if (val <= 100) {
+    const t = (val - 70) / 30;
+    return 0.2 * t * t + 0.3 * t + 0.7; // 70→0.7、100→1.2（加速）
+  }
+  return Math.min(1.35, 1.2 + (val - 100) / 200);
 }
 
 function calcMuscleSizes() {
@@ -1305,10 +1329,10 @@ function calcLevel() {
 function generateTitle() {
   const s = state.stats;
   const entries = [
-    { val: s.chest, prefix: '胸筋' },
-    { val: s.arm,   prefix: '腕'   },
-    { val: s.abs,   prefix: '腹筋' },
-    { val: s.leg,   prefix: '脚'   },
+    { val: s.chest, prefix: 'むね' },
+    { val: s.arm,   prefix: 'うで'   },
+    { val: s.abs,   prefix: 'はら' },
+    { val: s.leg,   prefix: 'あし'   },
   ];
   const maxVal = Math.max(...entries.map(e => e.val));
   const minVal = Math.min(...entries.map(e => e.val));
@@ -1369,8 +1393,27 @@ function getLifeRatio() {
   return Math.round(state.life / state.maxLife * 1000) / 10; // 0.0〜100.0
 }
 
+function getLifeMultiplier() {
+  const ratio = getLifeRatio();
+  if (ratio >= 100) return 1.5;
+  if (ratio >= 90)  return 1.4;
+  if (ratio >= 80)  return 1.3;
+  if (ratio >= 70)  return 1.2;
+  if (ratio >= 60)  return 1.1;
+  return 1.0;
+}
+
 function getLifeScore() {
-  return Math.floor(getLifeRatio() * calcLevel());
+  return Math.floor(getLifeRatio() * calcLevel() * getLifeMultiplier());
+}
+
+function getStatMultiplier(val) {
+  if (val >= 100) return 1.5;
+  if (val >= 90)  return 1.4;
+  if (val >= 80)  return 1.3;
+  if (val >= 70)  return 1.2;
+  if (val >= 60)  return 1.1;
+  return 1.0;
 }
 
 function getLifeComment() {
@@ -1410,9 +1453,9 @@ function showResultCard() {
   }
 
   function showFinalResult() {
-    const total = Object.values(state.stats).reduce((a, v) => a + v, 0);
     const lifeScore = getLifeScore();
-    const scoreNum = Math.floor(total * 10) + lifeScore;
+    const statScore = Object.values(state.stats).reduce((a, v) => a + v * 10 * getStatMultiplier(v), 0);
+    const scoreNum = Math.floor(statScore) + lifeScore;
     const score = scoreNum.toLocaleString();
     const title = generateTitle();
     const fullTitle = title + '山本くん';
@@ -1687,6 +1730,7 @@ function doRep(menu) {
 
   ['chest', 'arm', 'abs', 'leg'].forEach(stat => {
     const diff = Math.floor(state.stats[stat]) - prevFloor[stat];
+    if (gainStats.includes(stat)) flashCharPart(stat);
     if (diff >= 1) spawnStatFloat('+' + diff, stat, goodGain[stat], badGain[stat]);
   });
 
@@ -1839,7 +1883,7 @@ function startPassiveRegen() {
       state.passiveTicker = null;
       return;
     }
-    state.life = Math.min(state.maxLife, state.life + state.maxLife * 0.10);
+    state.life = Math.min(state.maxLife, state.life + state.maxLife * 0.20);
     updateLifeBar();
     if (state.life >= state.maxLife) {
       clearInterval(state.passiveTicker);
@@ -1872,7 +1916,7 @@ function startResting() {
 
   state.restTicker = setInterval(() => {
     if (state.levelUpFreeze) return;
-    state.life = Math.min(state.maxLife, state.life + state.maxLife * 0.05);
+    state.life = Math.min(state.maxLife, state.life + state.maxLife * 0.20);
     updateLifeBar();
     if (state.life >= state.maxLife) {
       state.life = state.maxLife;
@@ -1921,8 +1965,26 @@ const STAT_FLOAT_STYLE = {
   chest: { xPct: 62, yPct: 38, color: '#FF6B35' },
   arm:   { xPct: 28, yPct: 47, color: '#4ECDC4' },
   abs:   { xPct: 62, yPct: 56, color: '#C084FC' },
-  leg:   { xPct: 52, yPct: 80, color: '#4ADE80' },
+  leg:   { xPct: 52, yPct: 80, color: '#22C55E' },
 };
+
+const STAT_GLOW_GROUPS = {
+  chest: ['base-chest-group', 'base-shoulder-group', 'glow-chest', 'glow-shoulder'],
+  arm:   ['base-arm-group', 'glow-arm'],
+  abs:   ['base-abs-group', 'glow-abs'],
+  leg:   ['base-leg-group', 'glow-leg', 'glow-leg-calf'],
+};
+
+function flashCharPart(stat) {
+  (STAT_GLOW_GROUPS[stat] || []).forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('svg-glow');
+    void el.getBoundingClientRect();
+    el.classList.add('svg-glow');
+    el.addEventListener('animationend', () => el.classList.remove('svg-glow'), { once: true });
+  });
+}
 
 function spawnStatFloat(text, stat, isGood = false, isBad = false) {
   const s = STAT_FLOAT_STYLE[stat];

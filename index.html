@@ -114,12 +114,18 @@
   .stat-bar { height:8px; background:transparent; border-radius:4px; overflow:hidden; width: calc(100% + 40px); position:relative; }
   .stat-fill { height:100%; border-radius:4px; transition:width 0.5s ease; }
   @keyframes svgPartGlow {
-    0%   { filter: brightness(1)    saturate(1); }
-    30%  { filter: brightness(1.2) saturate(1); }
-    100% { filter: brightness(1)    saturate(1); }
+    0%   { filter: brightness(1)   saturate(1); -webkit-filter: brightness(1)   saturate(1); }
+    30%  { filter: brightness(1.2) saturate(1); -webkit-filter: brightness(1.2) saturate(1); }
+    100% { filter: brightness(1)   saturate(1); -webkit-filter: brightness(1)   saturate(1); }
+  }
+  @-webkit-keyframes svgPartGlow {
+    0%   { -webkit-filter: brightness(1)   saturate(1); }
+    30%  { -webkit-filter: brightness(1.2) saturate(1); }
+    100% { -webkit-filter: brightness(1)   saturate(1); }
   }
   .svg-glow {
     animation: svgPartGlow 0.8s ease-out forwards;
+    -webkit-animation: svgPartGlow 0.8s ease-out forwards;
   }
   /* 部位評価バッジ（リザルト時に表示） */
   .stat-eval {

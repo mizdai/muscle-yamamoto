@@ -479,6 +479,13 @@
     pointer-events:none;
     animation:floatUpShort 0.9s ease forwards; z-index:10;
   }
+  .float-text-stat.crit {
+    font-size:1.65rem;
+    text-shadow:
+      0 0 5px #FFE066,
+      0 0 10px #FFC107;
+    filter: drop-shadow(0 0 4px rgba(255, 193, 7, 0.95));
+  }
   .float-text-stat.sparkle-glow {
     text-shadow:
       0 0 4px #FFE066,
@@ -1018,7 +1025,7 @@ function stopSpeechLoop() {
 // CONSTANTS
 // ============================================================
 const MAX_STAT_VAL = 200.0;
-const TOTAL_DAYS = 100; // 制限時間(秒) = 大会までの日数
+const TOTAL_DAYS = 90; // 制限時間(秒) = 大会までの日数
 const INITIAL_BONUS_POINTS = 30;
 
 // ============================================================
@@ -1686,12 +1693,18 @@ function doRep(menu) {
   const prevFloor = {};
   ['chest', 'arm', 'abs', 'leg'].forEach(stat => { prevFloor[stat] = Math.floor(state.stats[stat]); });
 
-  menu.gains.forEach(g => {
+  // メイン部位 (gains[0]) で5%の確率で大成功
+  const critMainStat = menu.gains[0].stat;
+  const isCrit = Math.random() < 0.05;
+
+  menu.gains.forEach((g, gi) => {
     const cur = state.stats[g.stat];
     const statDecay = Math.max(0.20, 1.0 - 0.8 * cur / 100);
     const cond = state.conditions[g.stat];
     const condMod = cond === 'good' ? 1.5 : cond === 'bad' ? 0.5 : 1.0;
-    const base = g.min + Math.random() * (g.max - g.min);
+    // 大成功はメイン部位 (gi===0) のみ、基本値3倍
+    const critMul = (isCrit && gi === 0) ? 3.0 : 1.0;
+    const base = (g.min + Math.random() * (g.max - g.min)) * critMul;
     const amount = parseFloat((base * statDecay * levelBoost * condMod).toFixed(1));
     state.stats[g.stat] = parseFloat(Math.min(MAX_STAT_VAL, cur + amount).toFixed(1));
   });
@@ -1722,8 +1735,9 @@ function doRep(menu) {
 
   ['chest', 'arm', 'abs', 'leg'].forEach(stat => {
     const diff = Math.floor(state.stats[stat]) - prevFloor[stat];
-    if (gainStats.includes(stat)) flashCharPart(stat);
-    if (diff >= 1) spawnStatFloat('+' + diff, stat, goodGain[stat], badGain[stat]);
+    const critThis = isCrit && stat === critMainStat;
+    if (gainStats.includes(stat)) flashCharPart(stat, critThis);
+    if (diff >= 1) spawnStatFloat('+' + diff, stat, goodGain[stat], badGain[stat], critThis);
   });
 
   state.totalReps += 1;
@@ -1968,21 +1982,23 @@ const PART_RIPPLE_CENTERS = {
   leg:   [[38, 140], [62, 140]],
 };
 
-function flashCharPart(stat) {
+function flashCharPart(stat, isCrit = false) {
   const centers = PART_RIPPLE_CENTERS[stat];
   if (!centers) return;
   const svg = document.getElementById('charSvg');
   if (!svg) return;
+  const color = isCrit ? '#FFD24A' : 'white';
+  const startOpVal = isCrit ? 0.85 : 0.55;
   centers.forEach(([cx, cy]) => {
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('cx', cx);
     circle.setAttribute('cy', cy);
     circle.setAttribute('r', '4');
-    circle.setAttribute('fill', 'white');
-    circle.setAttribute('opacity', '0.55');
+    circle.setAttribute('fill', color);
+    circle.setAttribute('opacity', String(startOpVal));
     circle.setAttribute('pointer-events', 'none');
     svg.appendChild(circle);
-    const startR = 4, endR = 22, startOp = 0.55, dur = 700;
+    const startR = 4, endR = isCrit ? 28 : 22, startOp = startOpVal, dur = 700;
     let startTs = null;
     function tick(ts) {
       if (!startTs) startTs = ts;
@@ -1997,10 +2013,10 @@ function flashCharPart(stat) {
   });
 }
 
-function spawnStatFloat(text, stat, isGood = false, isBad = false) {
+function spawnStatFloat(text, stat, isGood = false, isBad = false, isCrit = false) {
   const s = STAT_FLOAT_STYLE[stat];
   const el = document.createElement('div');
-  el.className = 'float-text-stat' + (isGood ? ' sparkle-glow' : isBad ? ' dull-effect' : '');
+  el.className = 'float-text-stat' + (isGood ? ' sparkle-glow' : isBad ? ' dull-effect' : '') + (isCrit ? ' crit' : '');
   el.textContent = text;
   el.style.color = s.color;
   const w = charWrap.offsetWidth;

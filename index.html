@@ -113,20 +113,6 @@
   .stat-star { font-size:0.65em; vertical-align:middle; transform: translate(-2em, 1px); }
   .stat-bar { height:8px; background:transparent; border-radius:4px; overflow:hidden; width: calc(100% + 40px); position:relative; }
   .stat-fill { height:100%; border-radius:4px; transition:width 0.5s ease; }
-  @keyframes svgPartGlow {
-    0%   { filter: brightness(1)   saturate(1); -webkit-filter: brightness(1)   saturate(1); }
-    30%  { filter: brightness(1.2) saturate(1); -webkit-filter: brightness(1.2) saturate(1); }
-    100% { filter: brightness(1)   saturate(1); -webkit-filter: brightness(1)   saturate(1); }
-  }
-  @-webkit-keyframes svgPartGlow {
-    0%   { -webkit-filter: brightness(1)   saturate(1); }
-    30%  { -webkit-filter: brightness(1.2) saturate(1); }
-    100% { -webkit-filter: brightness(1)   saturate(1); }
-  }
-  .svg-glow {
-    animation: svgPartGlow 0.8s ease-out forwards;
-    -webkit-animation: svgPartGlow 0.8s ease-out forwards;
-  }
   /* 部位評価バッジ（リザルト時に表示） */
   .stat-eval {
     display:none;
@@ -1974,21 +1960,40 @@ const STAT_FLOAT_STYLE = {
   leg:   { xPct: 52, yPct: 80, color: '#22C55E' },
 };
 
-const STAT_GLOW_GROUPS = {
-  chest: ['base-chest-group', 'base-shoulder-group', 'glow-chest', 'glow-shoulder'],
-  arm:   ['base-arm-group', 'glow-arm'],
-  abs:   ['base-abs-group', 'glow-abs'],
-  leg:   ['base-leg-group', 'glow-leg', 'glow-leg-calf'],
+// 部位ごとのリップル中心座標 (SVG viewBox 0 0 100 215)
+const PART_RIPPLE_CENTERS = {
+  chest: [[50, 65]],
+  arm:   [[18, 80], [82, 80]],
+  abs:   [[50, 91]],
+  leg:   [[38, 140], [62, 140]],
 };
 
 function flashCharPart(stat) {
-  (STAT_GLOW_GROUPS[stat] || []).forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove('svg-glow');
-    void el.getBoundingClientRect();
-    el.classList.add('svg-glow');
-    el.addEventListener('animationend', () => el.classList.remove('svg-glow'), { once: true });
+  const centers = PART_RIPPLE_CENTERS[stat];
+  if (!centers) return;
+  const svg = document.getElementById('charSvg');
+  if (!svg) return;
+  centers.forEach(([cx, cy]) => {
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', '4');
+    circle.setAttribute('fill', 'white');
+    circle.setAttribute('opacity', '0.55');
+    circle.setAttribute('pointer-events', 'none');
+    svg.appendChild(circle);
+    const startR = 4, endR = 22, startOp = 0.55, dur = 700;
+    let startTs = null;
+    function tick(ts) {
+      if (!startTs) startTs = ts;
+      const p = Math.min((ts - startTs) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 2);
+      circle.setAttribute('r', (startR + (endR - startR) * eased).toFixed(1));
+      circle.setAttribute('opacity', (startOp * (1 - p)).toFixed(3));
+      if (p < 1) requestAnimationFrame(tick);
+      else circle.remove();
+    }
+    requestAnimationFrame(tick);
   });
 }
 

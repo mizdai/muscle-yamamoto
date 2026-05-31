@@ -1704,11 +1704,11 @@ function doRep(menu) {
   // 超得意・得意ボーナス（そのトレーニングで上がる部位のみ）
   const gainStats = menu.gains.map(g => g.stat);
   if (state.superFavStat && gainStats.includes(state.superFavStat)) {
-    const b = parseFloat((0.6 + Math.random() * 0.9).toFixed(1));
+    const b = parseFloat((1.1 + Math.random() * 1.4).toFixed(1));
     state.stats[state.superFavStat] = parseFloat(Math.min(MAX_STAT_VAL, state.stats[state.superFavStat] + b).toFixed(1));
   }
   if (state.favStat && gainStats.includes(state.favStat)) {
-    const b = parseFloat((0.1 + Math.random() * 0.9).toFixed(1));
+    const b = parseFloat((0.1 + Math.random() * 1.4).toFixed(1));
     state.stats[state.favStat] = parseFloat(Math.min(MAX_STAT_VAL, state.stats[state.favStat] + b).toFixed(1));
   }
 

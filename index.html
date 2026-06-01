@@ -110,7 +110,7 @@
   .stat-label { font-size:0.9rem; font-weight:700; color:var(--subtext); display:flex; gap:8px; align-items:center; }
   .stat-label span:first-child { width:2em; }
   .stat-label .stat-val { min-width:2.5em; text-align:right; transform: translate(-1em, 1px); }
-  .stat-star { font-size:0.65em; vertical-align:middle; transform: translate(-2em, 1px); }
+  .stat-star { font-size:0.65em; vertical-align:middle; display:inline-block; margin-left:-1.5em; }
   .stat-bar { height:8px; background:transparent; border-radius:4px; overflow:hidden; width: calc(100% + 40px); position:relative; }
   .stat-fill { height:100%; border-radius:4px; transition:width 0.5s ease; }
   /* 部位評価バッジ（リザルト時に表示） */
@@ -670,6 +670,11 @@
           <!-- ══════════════════════════════════
                LAYER 2a: 大腿部・腹筋マッスル（ショーツの後ろ）
           ══════════════════════════════════ -->
+          <g id="glow-leg" stroke="none">
+            <!-- 大腿部 (leg) -->
+            <ellipse id="m-thigh-l" cx="38" cy="133" rx="0" ry="0" opacity="0" transform="rotate(12 38 133)" fill="url(#gMuscleLeg)"/>
+            <ellipse id="m-thigh-r" cx="62" cy="133" rx="0" ry="0" opacity="0" transform="rotate(-12 62 133)" fill="url(#gMuscleLeg)"/>
+          </g>
           <g id="glow-abs" stroke="none">
             <!-- 腹筋 (abs) 6パック・下段→中段→上段の順で上が一番前 -->
             <ellipse id="m-abs-bl" cx="45" cy="99" rx="0" ry="0" opacity="0" fill="url(#gMuscleAbs)"/>
@@ -678,11 +683,6 @@
             <ellipse id="m-abs-mr" cx="55" cy="91" rx="0" ry="0" opacity="0" fill="url(#gMuscleAbs)"/>
             <ellipse id="m-abs-tl" cx="45" cy="83" rx="0" ry="0" opacity="0" fill="url(#gMuscleAbs)"/>
             <ellipse id="m-abs-tr" cx="55" cy="83" rx="0" ry="0" opacity="0" fill="url(#gMuscleAbs)"/>
-          </g>
-          <g id="glow-leg" stroke="none">
-            <!-- 大腿部 (leg) -->
-            <ellipse id="m-thigh-l" cx="38" cy="133" rx="0" ry="0" opacity="0" transform="rotate(12 38 133)" fill="url(#gMuscleLeg)"/>
-            <ellipse id="m-thigh-r" cx="62" cy="133" rx="0" ry="0" opacity="0" transform="rotate(-12 62 133)" fill="url(#gMuscleLeg)"/>
           </g>
 
           <!-- ショーツ (🩲ブリーフ型) -->
@@ -832,7 +832,7 @@
         <img src="icons/logo.png" alt="チョモランマ！山本くん" style="width:170%;max-width:none;margin-left:-43%;height:auto;margin-top:-82px;">
         <div style="margin-left:-20px;padding-top:30px;display:flex;flex-direction:column;align-items:center;gap:inherit;">
           <div class="title-desc" style="margin-top:-20px;">
-            トレーニングを選んで<br>山本くんを鍛えよう！
+            トレーニングを選んで<br>山本くんを鍛えよう！<br>目指せ全部位90超え！
           </div>
           <button class="title-start-btn" id="titleStartBtn">▶ スタート</button>
         </div>
@@ -1056,8 +1056,9 @@ const state = {
   gameOver: false,
   gameStarted: false, // タイトル画面 → false / ゲーム中 → true
   gameTicker: null,
-  superFavStat: null,
-  favStat: null,
+  starCounts: { chest: 0, arm: 0, abs: 0, leg: 0 },
+  starThresholds: [],
+  nextStarIdx: 0,
 };
 // ============================================================
 // DOM
@@ -1336,7 +1337,7 @@ function generateTitle() {
   const maxVal = Math.max(...entries.map(e => e.val));
   const minVal = Math.min(...entries.map(e => e.val));
 
-  const isBalanced = (maxVal - minVal <= 30) || (minVal >= 90) || (maxVal < 50);
+  const isBalanced = (maxVal - minVal <= 20) || (minVal >= 90) || (maxVal < 50);
   if (isBalanced) {
     // バランス型：全部位の最低値で判定
     if (minVal >= 90) return 'チョモランマ！';
@@ -1682,8 +1683,8 @@ function doRep(menu) {
   if (state.life <= 0) { startResting(); return; }
   const mainStat = state.stats[menu.gains[0].stat];
   const bonus = Math.floor(mainStat / 30);
-  const lifeMin = (1 + bonus) * 10;
-  const lifeMax = (3 + bonus) * 10;
+  const lifeMin = 10 + bonus * 5;
+  const lifeMax = 30 + bonus * 5;
   const lifeCost = lifeMin + Math.floor(Math.random() * (lifeMax - lifeMin + 1));
   state.life = Math.max(0, state.life - lifeCost);
 
@@ -1714,16 +1715,17 @@ function doRep(menu) {
     state.stats[stat] = parseFloat(Math.min(MAX_STAT_VAL, state.stats[stat] + extra).toFixed(1));
   });
 
-  // 超得意・得意ボーナス（そのトレーニングで上がる部位のみ）
+  // 得意部位ボーナス（⭐数に応じた補正）
   const gainStats = menu.gains.map(g => g.stat);
-  if (state.superFavStat && gainStats.includes(state.superFavStat)) {
-    const b = parseFloat((1.1 + Math.random() * 1.4).toFixed(1));
-    state.stats[state.superFavStat] = parseFloat(Math.min(MAX_STAT_VAL, state.stats[state.superFavStat] + b).toFixed(1));
-  }
-  if (state.favStat && gainStats.includes(state.favStat)) {
-    const b = parseFloat((0.1 + Math.random() * 1.4).toFixed(1));
-    state.stats[state.favStat] = parseFloat(Math.min(MAX_STAT_VAL, state.stats[state.favStat] + b).toFixed(1));
-  }
+  gainStats.forEach(stat => {
+    const stars = state.starCounts[stat] || 0;
+    if (stars <= 0) return;
+    const b = stars === 1 ? parseFloat((0.1 + Math.random() * 1.4).toFixed(1))
+            : stars === 2 ? parseFloat((1.1 + Math.random() * 1.4).toFixed(1))
+            :               parseFloat((2.1 + Math.random() * 1.4).toFixed(1));
+    state.stats[stat] = parseFloat(Math.min(MAX_STAT_VAL, state.stats[stat] + b).toFixed(1));
+  });
+  checkStarUpgrade();
 
   // どのstatが好調/不調状態だったかを記録
   const goodGain = { chest:false, arm:false, abs:false, leg:false };
@@ -2247,14 +2249,14 @@ function scheduleNextConditionChange() {
     const currentBadCat = CATEGORIES.find(c => state.conditions[c] === 'bad');
 
     // 不調の処理
-    if (!currentBadCat && Math.random() < 0.20) {
+    if (!currentBadCat && Math.random() < 0.30) {
       // 不調を1箇所だけ新規発生
       const newBadCat = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
       if (state.conditions[newBadCat] === 'good') stopGoodEffect(newBadCat);
       state.conditions[newBadCat] = 'bad';
     } else if (currentBadCat && Math.random() < 0.5) {
       // 既存の不調を解除
-      state.conditions[currentBadCat] = rollCondition();
+      state.conditions[currentBadCat] = 'normal';
     }
 
     // 好調部位を50%でいったん普通に戻してからローテーション
@@ -2265,13 +2267,12 @@ function scheduleNextConditionChange() {
       state.conditions[resetCat] = 'normal';
     }
 
-    // 不調でない部位から1つ振り直し（既に不調がある場合はbadにしない）
+    // 不調でない部位から1つ振り直し（badは絶対に設定しない）
     const nonBadCats = CATEGORIES.filter(c => state.conditions[c] !== 'bad');
     const target = nonBadCats[Math.floor(Math.random() * nonBadCats.length)];
     if (target) {
       const newCond = rollCondition();
-      const stillBad = CATEGORIES.find(c => state.conditions[c] === 'bad');
-      state.conditions[target] = (newCond === 'bad' && stillBad) ? 'normal' : newCond;
+      state.conditions[target] = newCond === 'bad' ? 'normal' : newCond;
     }
 
     // 常に最低1箇所は好調を保証
@@ -2440,21 +2441,75 @@ function beginGame() {
   startConditionSystem();
 }
 
-function assignFavStats() {
-  const keys = ['chest', 'arm', 'abs', 'leg'];
-  const shuffled = keys.slice().sort(() => Math.random() - 0.5);
-  state.superFavStat = shuffled[0];
-  state.favStat = shuffled[1];
-  updateFavStarDisplay();
+function initStarThresholds() {
+  state.starCounts  = { chest: 0, arm: 0, abs: 0, leg: 0 };
+  state.starThresholds = [
+    Math.floor(50  + Math.random() * 51),
+    Math.floor(120 + Math.random() * 51),
+    Math.floor(190 + Math.random() * 51),
+    Math.floor(260 + Math.random() * 51),
+  ];
+  state.nextStarIdx = 0;
 }
 
-function updateFavStarDisplay() {
+function checkStarUpgrade() {
+  while (state.nextStarIdx < state.starThresholds.length) {
+    const total = Object.values(state.stats).reduce((a, v) => a + v, 0);
+    if (total < state.starThresholds[state.nextStarIdx]) break;
+    state.nextStarIdx++;
+    const eligible = ['chest', 'arm', 'abs', 'leg'].filter(c => state.starCounts[c] < 3);
+    if (eligible.length === 0) continue;
+    const chosen = eligible[Math.floor(Math.random() * eligible.length)];
+    state.starCounts[chosen]++;
+    updateStarDisplay(chosen, true);
+  }
+}
+
+function updateStarDisplay(highlightStat, sparkle) {
   ['chest', 'arm', 'abs', 'leg'].forEach(k => {
     const el = document.getElementById('star-' + k);
-    if (!el) return;
-    if (k === state.superFavStat)    el.textContent = '⭐⭐';
-    else if (k === state.favStat)    el.textContent = '⭐';
-    else                             el.textContent = '';
+    if (el) el.textContent = '⭐'.repeat(state.starCounts[k]);
+  });
+  if (sparkle && highlightStat) spawnStarSparkle(highlightStat);
+}
+
+function spawnStarSparkle(stat) {
+  const starEl = document.getElementById('star-' + stat);
+  if (!starEl) return;
+  starEl.style.transition = 'transform 0.18s cubic-bezier(0.34,1.56,0.64,1)';
+  starEl.style.transform = 'scale(3.2)';
+  setTimeout(() => {
+    starEl.style.transform = 'scale(1)';
+    setTimeout(() => { starEl.style.transition = ''; }, 250);
+  }, 220);
+  const rect = starEl.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  ['✨', '⭐', '💫', '✨', '⭐', '✨'].forEach((sym, i) => {
+    const sp = document.createElement('div');
+    sp.textContent = sym;
+    const fs = (12 + Math.random() * 8).toFixed(0);
+    sp.style.cssText = `position:fixed;font-size:${fs}px;pointer-events:none;z-index:300;left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);opacity:0;`;
+    document.body.appendChild(sp);
+    const angle = (i / 6) * Math.PI * 2 + Math.random() * 0.5;
+    const dist  = 28 + Math.random() * 22;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    const dur = 650 + Math.random() * 200;
+    setTimeout(() => {
+      let startTs = null;
+      function tick(ts) {
+        if (!startTs) startTs = ts;
+        const p = Math.min((ts - startTs) / dur, 1);
+        const e = 1 - Math.pow(1 - p, 2);
+        sp.style.left    = (cx + dx * e) + 'px';
+        sp.style.top     = (cy + dy * e) + 'px';
+        sp.style.opacity = (p < 0.25 ? p / 0.25 : 1 - (p - 0.25) / 0.75).toFixed(3);
+        if (p < 1) requestAnimationFrame(tick);
+        else sp.remove();
+      }
+      requestAnimationFrame(tick);
+    }, i * 40);
   });
 }
 
@@ -2479,7 +2534,8 @@ document.getElementById('titleStartBtn').addEventListener('click', () => {
   document.getElementById('menuInner').style.display = 'flex';
   // カウントダウン終了後にメニュー解除 & タイマースタート
   startCountdown(() => {
-    assignFavStats();
+    initStarThresholds();
+    updateStarDisplay();
     applyInitialBonus();
     document.getElementById('menuCard').classList.remove('title-disabled');
     state.gameStarted = true;

@@ -964,16 +964,16 @@ function renderHighscores() {
 // ============================================================
 const MENUS = [
   { id:'bench',    name:'ベンチ',     icon:'🏋️', target:'むね',
-    tickMs:1350, color:'#FF6B35',
+    tickMs:1400, color:'#FF6B35',
     gains:[{stat:'chest',min:2.5,max:3.5},{stat:'arm',  min:0.5,max:1.5}] },
   { id:'dumbbell', name:'ダンベル',   icon:'💪', target:'うで',
-    tickMs:1350, color:'#4ECDC4',
+    tickMs:1400, color:'#4ECDC4',
     gains:[{stat:'arm',  min:2.5,max:3.5},{stat:'leg',  min:0.5,max:1.5}] },
   { id:'plank',    name:'プランク',   icon:'🔥', target:'はら',
-    tickMs:1350, color:'#C084FC',
+    tickMs:1400, color:'#C084FC',
     gains:[{stat:'abs',  min:2.5,max:3.5},{stat:'chest',min:0.5,max:1.5}] },
   { id:'squat',    name:'スクワット', icon:'🦵', target:'あし',
-    tickMs:1350, color:'#4ADE80',
+    tickMs:1400, color:'#4ADE80',
     gains:[{stat:'leg',  min:2.5,max:3.5},{stat:'abs',  min:0.5,max:1.5}] },
 ];
 
@@ -2241,7 +2241,7 @@ function rollCondition() {
 }
 
 function scheduleNextConditionChange() {
-  const delay = 3000 + Math.random() * 3000;
+  const delay = 5000 + Math.random() * 3000;
   state.conditionTicker = setTimeout(() => {
     if (state.gameOver) return;
 
@@ -2249,7 +2249,7 @@ function scheduleNextConditionChange() {
     const currentBadCat = CATEGORIES.find(c => state.conditions[c] === 'bad');
 
     // 不調の処理
-    if (!currentBadCat && Math.random() < 0.30) {
+    if (!currentBadCat && Math.random() < 0.40) {
       // 不調を1箇所だけ新規発生
       const newBadCat = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
       if (state.conditions[newBadCat] === 'good') stopGoodEffect(newBadCat);

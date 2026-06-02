@@ -964,16 +964,16 @@ function renderHighscores() {
 // ============================================================
 const MENUS = [
   { id:'bench',    name:'ベンチ',     icon:'🏋️', target:'むね',
-    tickMs:1500, color:'#FF6B35',
+    tickMs:1350, color:'#FF6B35',
     gains:[{stat:'chest',min:2.5,max:3.5},{stat:'arm',  min:0.5,max:1.5}] },
   { id:'dumbbell', name:'ダンベル',   icon:'💪', target:'うで',
-    tickMs:1500, color:'#4ECDC4',
+    tickMs:1350, color:'#4ECDC4',
     gains:[{stat:'arm',  min:2.5,max:3.5},{stat:'leg',  min:0.5,max:1.5}] },
   { id:'plank',    name:'プランク',   icon:'🔥', target:'はら',
-    tickMs:1500, color:'#C084FC',
+    tickMs:1350, color:'#C084FC',
     gains:[{stat:'abs',  min:2.5,max:3.5},{stat:'chest',min:0.5,max:1.5}] },
   { id:'squat',    name:'スクワット', icon:'🦵', target:'あし',
-    tickMs:1500, color:'#4ADE80',
+    tickMs:1350, color:'#4ADE80',
     gains:[{stat:'leg',  min:2.5,max:3.5},{stat:'abs',  min:0.5,max:1.5}] },
 ];
 
@@ -1924,7 +1924,7 @@ function startResting() {
 
   state.restTicker = setInterval(() => {
     if (state.levelUpFreeze) return;
-    state.life = Math.min(state.maxLife, state.life + state.maxLife * 0.20);
+    state.life = Math.min(state.maxLife, state.life + state.maxLife * 0.15);
     updateLifeBar();
     if (state.life >= state.maxLife) {
       state.life = state.maxLife;

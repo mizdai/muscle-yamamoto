@@ -416,7 +416,7 @@
 
   /* ゲーム終了後リザルト */
   .result-wrap {
-    display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:8px;
+    display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:6px;
     padding:4px 4px;
     width:100%;
     min-height:150px;
@@ -442,6 +442,19 @@
   }
   .result-title-line .result-title-name {
     font-size:1.3rem; color:var(--subtext); text-shadow:none;
+  }
+  /* 審査員コメント (称号とボタンの間・1行空けて配置) */
+  .result-judge {
+    margin-top:8px;
+    display:flex; flex-direction:column; gap:3px;
+    width:100%;
+    align-items:center; text-align:center;
+  }
+  .result-judge-label {
+    font-size:0.72rem; font-weight:800; color:var(--accent); letter-spacing:1px;
+  }
+  .result-judge-text {
+    font-size:0.85rem; font-weight:700; color:var(--subtext); line-height:1.4;
   }
   .result-rank-badge {
     display:inline-block;
@@ -1053,6 +1066,21 @@ const SPEECHES = {
   finish:   ['やりきった！', '筋肉たち、お疲れ！', '筋肉フィニッシュ！', '頑張った！', 'パンプ完了！', 'ベンチよ、またな！', 'いい追い込みだった！', 'プロテイン、牛乳割りで！', 'マッスル解散！'],
 };
 
+// 審査員コメント（一言アドバイス）— ここに追加していけば自動でランダム表示される
+const JUDGE_COMMENTS = [
+  '🔥は好調の印。通常の1.5倍成長するぞ！',
+  '🌀は不調の印。通常の半分しか成長しないぞ',
+  '黄色く光ったら大成功。一気に3倍成長するぞ！',
+  '⭐️のついた部位は、成長が底上げされるぞ',
+  '自主トレは時間制限なし。ただし記録は残らないぞ',
+  '❤️の残量も評価に影響する。適度に休憩しよう！',
+  '成長した部位は、だんだん伸びにくくなるぞ',
+  '数値の低い部位は伸びやすい。バランスが大事だ！',
+  '全部位90以上で、最高の称号を獲得できるぞ！',
+  '❤️が多く残っているほど、🔥が出やすいぞ！',
+  '各トレーニングは、メイン以外の部位も少し育つぞ',
+];
+
 let _speechTicker = null;
 
 function startSpeechLoop(phrases, isCool = false) {
@@ -1518,10 +1546,14 @@ function showResultCard() {
       : '';
     const wrap = document.getElementById('resultWrap');
     if (!wrap) return;
+    const judgeComment = JUDGE_COMMENTS[Math.floor(Math.random() * JUDGE_COMMENTS.length)];
     wrap.innerHTML = `
       <div class="result-score-line">評価　<span class="result-score-num">${score}</span><span style="color:var(--subtext);font-size:1rem;"> 点</span> ${rankBadge}</div>
       <div class="result-title-line">称号　<span class="result-title-name">${fullTitle}</span></div>
-      <button class="title-start-btn" id="returnTitleBtn" style="margin-top:10px;align-self:center;">▶ タイトルに戻る</button>`;
+      <div class="result-judge">
+        <span class="result-judge-text">${judgeComment}</span>
+      </div>
+      <button class="title-start-btn" id="returnTitleBtn" style="margin-top:4px;align-self:center;">▶ タイトルに戻る</button>`;
     document.getElementById('returnTitleBtn').addEventListener('click', () => {
       location.reload();
     });

@@ -257,19 +257,18 @@
   .title-start-btn { width: 100%; }
   /* 自主トレ終了ボタン (画面右下固定) */
   .selftrain-end-btn {
-    position: fixed;
-    right: clamp(12px, 4vw, 20px);
-    bottom: clamp(48px, 12vw, 72px);
+    display: block;
+    width: fit-content;
+    margin-left: auto;
     background: #22C55E;
     color: white;
     border: none;
     border-radius: 18px;
-    padding: 10px 22px;
+    padding: 5px 22px;
     font-weight: 900;
     font-size: 0.95rem;
     cursor: pointer;
     box-shadow: 0 3px 0 #15803D;
-    z-index: 300;
     transition: transform 0.1s, box-shadow 0.1s, background 0.2s;
   }
   .selftrain-end-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #15803D; }
@@ -332,7 +331,7 @@
   .log-line.new { color:var(--accent); font-weight:700; }
 
   .section-title { font-weight:900; font-size:1rem; color:var(--text); padding-left:4px; }
-  #highscoreWrap .section-title { color:var(--subtext); text-align:center; padding-left:0; }
+  #menuCard #highscoreWrap .section-title { color:var(--accent); text-align:center; padding-left:0; font-size:1rem; }
   #menuCard .section-title { color:var(--subtext); }
   .section-title-row { display:flex; align-items:center; justify-content:space-between; }
   .menu-inner { display:flex; flex-direction:column; gap:10px; }
@@ -355,8 +354,14 @@
   }
   .menu-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:clamp(4px, 1.5vw, 8px); }
   /* 歴代上位入賞者 */
-  .highscore-wrap { display:flex; flex-direction:column; gap:12px; min-height:150px; }
-  .highscore-list { display:flex; flex-direction:column; gap:10px; padding:0 2px; }
+  .highscore-wrap { display:flex; flex-direction:column; gap:7px; }
+  .highscore-list { display:flex; flex-direction:column; gap:10px; padding:0 2px; margin-top:-2px; }
+  .highscore-hint {
+    margin-top:7px;
+    text-align:right;
+    font-size:0.72rem; font-weight:700; color:var(--subtext);
+    line-height:1.5;
+  }
   .hs-row {
     display:flex; align-items:center; gap:10px;
     font-weight:800; color:var(--text);
@@ -372,6 +377,28 @@
   .hs-rank.gold   { background:#E0A100; box-shadow:0 2px 8px rgba(224,161,0,0.55); }
   .hs-rank.silver { background:#8E99A8; box-shadow:0 2px 8px rgba(142,153,168,0.55); }
   .hs-rank.bronze { background:#B5732E; box-shadow:0 2px 8px rgba(181,115,46,0.55); }
+  /* 体型復元時に頭上に出す順位バッジ */
+  .char-head-badge {
+    position:absolute;
+    top:-47px;
+    left:calc(50% + 29px);
+    transform:translateX(-50%) scale(0.6);
+    z-index:30;
+    font-size:0.85rem; font-weight:900; color:#fff;
+    padding:3px 14px; border-radius:14px;
+    text-shadow:0 1px 2px rgba(0,0,0,0.25);
+    white-space:nowrap;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.3s ease, transform 0.3s cubic-bezier(0.18,0.89,0.32,1.4);
+  }
+  .char-head-badge.show {
+    opacity:1;
+    transform:translateX(-50%) scale(1);
+  }
+  .char-head-badge.gold   { background:#E0A100; box-shadow:0 2px 10px rgba(224,161,0,0.6); }
+  .char-head-badge.silver { background:#8E99A8; box-shadow:0 2px 10px rgba(142,153,168,0.6); }
+  .char-head-badge.bronze { background:#B5732E; box-shadow:0 2px 10px rgba(181,115,46,0.6); }
   .hs-score {
     flex-shrink:0;
     font-size:1rem; font-weight:900; color:var(--subtext);
@@ -382,17 +409,21 @@
     font-size:1rem; font-weight:700; color:var(--subtext);
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
+  .hs-title-tap {
+    cursor:pointer; text-decoration:underline dotted;
+  }
+  .hs-title-tap:hover { color:var(--accent); }
   .hs-row.empty .hs-score, .hs-row.empty .hs-title { color:#D8C8BC; }
   .menu-btn {
     background:#FFF8F0;
     border:2px solid var(--border);
     border-radius:14px;
-    padding:clamp(4px, 1vw, 6px) clamp(2px, 0.5vw, 4px) clamp(6px, 2vw, 8px);
+    padding:clamp(3px, 0.8vw, 5px) clamp(2px, 0.5vw, 4px) clamp(3px, 0.8vw, 5px);
     cursor:pointer;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:clamp(2px, 1vw, 4px);
+    gap:1px;
     transition:all 0.2s;
     box-shadow:0 2px 6px var(--shadow);
     position:relative;
@@ -406,13 +437,14 @@
   .menu-icon { font-size:2rem; line-height:1; }
   .menu-icon-img {
     width: 100%;
-    max-width: clamp(60px, 19vw, 90px);
+    max-width: clamp(52px, 16vw, 78px);
     height: auto;
     aspect-ratio: 1 / 1;
     object-fit: contain;
     display: block;
   }
-  .menu-name { font-weight:800; font-size:clamp(0.7rem, 2.5vw, 0.85rem); color:var(--subtext); }
+  .menu-name { font-weight:800; font-size:clamp(0.7rem, 2.5vw, 0.85rem); color:var(--subtext); line-height:1.1; }
+  .menu-target { font-weight:700; font-size:clamp(0.58rem, 1.8vw, 0.68rem); color:var(--subtext); line-height:1.1; }
 
   /* ゲーム終了後リザルト */
   .result-wrap {
@@ -640,6 +672,23 @@
   .levelup-banner.gameend .levelup-main {
     font-size: 1.2rem;
   }
+  @keyframes menuHintPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.2; }
+  }
+  .menu-hint {
+    display: none;
+    position: absolute;
+    bottom: -20px;
+    left: 0; right: 0;
+    text-align: center;
+    color: #E53E3E;
+    font-weight: 900;
+    font-size: clamp(0.75rem, 2.8vw, 0.9rem);
+    z-index: 10;
+    animation: menuHintPulse 1.6s ease-in-out infinite;
+  }
+  .menu-hint.show { display: block; }
 </style>
 </head>
 <body class="title-active">
@@ -657,6 +706,7 @@
     <div class="char-status waiting" id="charStatus">待機中</div>
     <div class="char-area">
       <div class="char-svg-wrap" id="charWrap">
+        <div class="char-head-badge" id="charHeadBadge"></div>
         <!--
           SVG viewBox: 0 0 100 200
           全パーツはJS側からrx/ryのみ変更。cx/cyは固定。
@@ -901,6 +951,7 @@
     </div>
 
     <div class="char-bottom-row"></div>
+    <div class="menu-hint" id="menuHint">▼メニューからトレーニングを選ぼう！▼</div>
   </div>
 
   <!-- Menu -->
@@ -909,6 +960,7 @@
     <div class="highscore-wrap" id="highscoreWrap">
       <div class="section-title">－　歴代上位入賞者　－</div>
       <div class="highscore-list" id="highscoreList"></div>
+      <div class="highscore-hint">（称号名を押すと、入賞時の体型が再現されるぞ）</div>
     </div>
     <!-- ゲーム画面用: トレーニングメニュー -->
     <div class="menu-inner" id="menuInner" style="display:none;">
@@ -930,7 +982,7 @@
 // ============================================================
 // HIGH SCORE (歴代上位3位まで・永続化)
 // ============================================================
-let highscores = []; // [{score:Number, title:String}]
+let highscores = []; // [{score, title, level, maxLife, life, stats:{chest,arm,abs,leg}}]
 let lastRank = 0;    // 直近のゲームで何位に入ったか（0=圏外）
 
 function loadHighscores() {
@@ -982,8 +1034,8 @@ function onResetClick() {
 }
 
 // 新スコアを記録。入賞したら順位(1-3)を返す。圏外なら0
-function submitScore(scoreNum, title) {
-  const entry = { score: scoreNum, title: title };
+function submitScore(scoreNum, title, snapshot) {
+  const entry = { score: scoreNum, title, ...snapshot };
   const list = highscores.slice();
   list.push(entry);
   list.sort((a, b) => b.score - a.score);
@@ -1004,10 +1056,11 @@ function renderHighscores() {
     const hs = highscores[i];
     const rc = rankClasses[i];
     if (hs) {
+      const tappable = hs.stats ? ' hs-title-tap" data-idx="' + i : '"';
       html += `<div class="hs-row">
         <span class="hs-rank ${rc}">${i + 1}位</span>
         <span class="hs-score">${hs.score.toLocaleString()}点</span>
-        <span class="hs-title">${hs.title}</span>
+        <span class="hs-title${tappable}">${hs.title}</span>
       </div>`;
     } else {
       html += `<div class="hs-row empty">
@@ -1018,6 +1071,51 @@ function renderHighscores() {
     }
   }
   el.innerHTML = html;
+  el.querySelectorAll('.hs-title[data-idx]').forEach(titleEl => {
+    titleEl.addEventListener('click', () => {
+      const idx = +titleEl.dataset.idx;
+      const hs = highscores[idx];
+      if (!hs || !hs.stats) return;
+      if (_selectedRestoreIdx === idx) {
+        // 同じ称号を再度タップ → オール0に戻してバッジを消す
+        applyStatsToMuscles({ chest: 0, arm: 0, abs: 0, leg: 0 });
+        hideHeadBadge();
+        _selectedRestoreIdx = null;
+      } else {
+        // 初期体型(誰も選択していない)からの復元はshrinkスキップで即膨らむ
+        const skipShrink = (_selectedRestoreIdx === null);
+        if (!skipShrink) hideHeadBadge(); // 縮小と同タイミングでバッジを消す
+        applyStatsToMuscles(hs.stats, skipShrink);
+        if (skipShrink) {
+          showHeadBadge(idx);
+        } else {
+          // shrink(200ms) + wait(200ms) 後に膨らむのに合わせてバッジを出す
+          setTimeout(() => showHeadBadge(idx), 400);
+        }
+        _selectedRestoreIdx = idx;
+      }
+    });
+  });
+}
+
+let _selectedRestoreIdx = null;
+
+function hideHeadBadge() {
+  const badge = document.getElementById('charHeadBadge');
+  if (badge) badge.classList.remove('show');
+}
+
+function showHeadBadge(idx) {
+  const badge = document.getElementById('charHeadBadge');
+  if (!badge) return;
+  const rankClasses = ['gold', 'silver', 'bronze'];
+  badge.className = 'char-head-badge ' + (rankClasses[idx] || '');
+  badge.textContent = (idx + 1) + '位';
+  // いったん消してからアニメで出す
+  badge.classList.remove('show');
+  void badge.offsetWidth; // reflow
+  // 膨らみ演出(720ms)に合わせて少し遅れて出す
+  setTimeout(() => badge.classList.add('show'), 250);
 }
 
 // ============================================================
@@ -1068,9 +1166,9 @@ const SPEECHES = {
 
 // 審査員コメント（一言アドバイス）— ここに追加していけば自動でランダム表示される
 const JUDGE_COMMENTS = [
-  '🔥は好調の印。通常の1.5倍成長するぞ！',
-  '🌀は不調の印。通常の半分しか成長しないぞ',
-  '黄色く光ったら大成功。一気に3倍成長するぞ！',
+  '🔥は好調の印。通常よりも早く成長するぞ！',
+  '🌀は不調の印。通常よりも成長が鈍くなるぞ',
+  '黄色く光ったら大成功。一気に成長するぞ！',
   '⭐️のついた部位は、成長が底上げされるぞ',
   '自主トレは時間制限なし。ただし記録は残らないぞ',
   '❤️の残量も評価に影響する。適度に休憩しよう！',
@@ -1159,6 +1257,7 @@ MENUS.forEach(m => {
   btn.innerHTML = `
     <img class="menu-icon-img" src="icons/${m.id}.png" alt="${m.name}">
     <span class="menu-name">${m.name}</span>
+    <span class="menu-target">（${m.target}）</span>
   `;
   btn.onclick = () => selectMenu(m.id);
   menuGrid.appendChild(btn);
@@ -1227,6 +1326,147 @@ function applyMuscleSizes(scale = 1.0) {
   Object.entries(sizes).forEach(([id, { rx, ry }]) => setMuscle(id, rx * scale, ry * scale, 1));
 }
 
+function calcStatsMuscleSizes(stats) {
+  const c = muscleR(stats.chest), a = muscleR(stats.arm), b = muscleR(stats.abs), l = muscleR(stats.leg);
+  return {
+    'm-neck':       { rx: lerp(5.5,  12.48, c), ry: lerp(6.05,  14.04, c) },
+    'm-shoulder-l': { rx: lerp(7.15, 17.16, c), ry: lerp(5.28,  12.48, c) },
+    'm-shoulder-r': { rx: lerp(7.15, 17.16, c), ry: lerp(5.28,  12.48, c) },
+    'm-pec-l':      { rx: lerp(6.6,  15.6,  c), ry: lerp(8.8,   21.12, c) },
+    'm-pec-r':      { rx: lerp(6.6,  15.6,  c), ry: lerp(8.8,   21.12, c) },
+    'm-arm-u-l':    { rx: lerp(5.28, 12.48, a), ry: lerp(12.1,  28.08, a) },
+    'm-arm-u-r':    { rx: lerp(5.28, 12.48, a), ry: lerp(12.1,  28.08, a) },
+    'm-arm-f-l':    { rx: lerp(4.62, 10.92, a), ry: lerp(11,    26.52, a) },
+    'm-arm-f-r':    { rx: lerp(4.62, 10.92, a), ry: lerp(11,    26.52, a) },
+    'm-abs-tl':     { rx: lerp(5.5,  13.26, b), ry: lerp(4.62,  10.92, b) },
+    'm-abs-tr':     { rx: lerp(5.5,  13.26, b), ry: lerp(4.62,  10.92, b) },
+    'm-abs-ml':     { rx: lerp(5.5,  13.26, b), ry: lerp(4.62,  10.92, b) },
+    'm-abs-mr':     { rx: lerp(5.5,  13.26, b), ry: lerp(4.62,  10.92, b) },
+    'm-abs-bl':     { rx: lerp(5.5,  13.26, b), ry: lerp(4.62,  10.92, b) },
+    'm-abs-br':     { rx: lerp(5.5,  13.26, b), ry: lerp(4.62,  10.92, b) },
+    'm-thigh-l':    { rx: lerp(6.6,  15.6,  l), ry: lerp(14.3,  32.76, l) },
+    'm-thigh-r':    { rx: lerp(6.6,  15.6,  l), ry: lerp(14.3,  32.76, l) },
+    'm-calf-l':     { rx: lerp(5.28, 12.48, l), ry: lerp(14.3,  32.76, l) },
+    'm-calf-r':     { rx: lerp(5.28, 12.48, l), ry: lerp(14.3,  32.76, l) },
+  };
+}
+
+function applyGradientColors(stats) {
+  const valR = (val) => val / MAX_STAT_VAL;
+  const applyColor = (id1, id2, ratio) => {
+    document.getElementById(id1).setAttribute('stop-color', lerpColor('#F0C898', '#F8DEB8', ratio));
+    document.getElementById(id2).setAttribute('stop-color', lerpColor('#F0C898', '#A85C20', ratio));
+  };
+  applyColor('muscleChestStop1', 'muscleChestStop2', valR(stats.chest));
+  applyColor('muscleArmStop1',   'muscleArmStop2',   valR(stats.arm));
+  applyColor('muscleAbsStop1',   'muscleAbsStop2',   valR(stats.abs));
+  applyColor('muscleLegStop1',   'muscleLegStop2',   valR(stats.leg));
+}
+
+let _restoreAnimRAF = null;
+
+function applyStatsToMuscles(stats, skipShrink = false) {
+  // まず全パーツを0に戻す（シュッ）
+  if (_restoreAnimRAF) cancelAnimationFrame(_restoreAnimRAF);
+  const target = calcStatsMuscleSizes(stats);
+  const ids = Object.keys(target);
+  // 色は先に反映
+  applyGradientColors(stats);
+
+  // 全ステータス0なら「縮むだけ」(膨張演出なし)
+  const isAllZero = (stats.chest + stats.arm + stats.abs + stats.leg) === 0;
+
+  // ステップ1: 0へ縮める (200ms) → ウェイト(500ms) → ステップ2: ボワッと膨らむ (オーバーシュート, 500ms)
+  const shrinkDur = 200, waitDur = 200, growDur = 520;
+
+  // 現在のサイズを開始値として取得
+  const startSize = {};
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    startSize[id] = { rx: parseFloat(el.getAttribute('rx') || '0'), ry: parseFloat(el.getAttribute('ry') || '0') };
+  });
+
+  // peak = 目標の+10%
+  const peak = {};
+  ids.forEach(id => { peak[id] = { rx: target[id].rx * 1.1, ry: target[id].ry * 1.1 }; });
+
+  // skipShrink: 初期体型からの復元はshrink不要、即0にしてgrowから開始
+  let phase = skipShrink ? 'grow' : 'shrink';
+  if (skipShrink) {
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      el.setAttribute('rx', '0');
+      el.setAttribute('ry', '0');
+      el.setAttribute('opacity', '0');
+    });
+  }
+  let startTs = null;
+  function tick(ts) {
+    if (!startTs) startTs = ts;
+    const elapsed = ts - startTs;
+    if (phase === 'shrink') {
+      const p = Math.min(elapsed / shrinkDur, 1);
+      const e = 1 - Math.pow(1 - p, 2);
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        // オール0なら現在サイズ→target(最小)へ、それ以外は0へ縮める
+        const endRx = isAllZero ? target[id].rx : 0;
+        const endRy = isAllZero ? target[id].ry : 0;
+        const rx = startSize[id].rx + (endRx - startSize[id].rx) * e;
+        const ry = startSize[id].ry + (endRy - startSize[id].ry) * e;
+        el.setAttribute('rx', rx.toFixed(2));
+        el.setAttribute('ry', ry.toFixed(2));
+        const ratioOp = isAllZero ? (target[id].ry > 0 ? Math.min(1, ry / target[id].ry) : 0) : (1 - e);
+        el.setAttribute('opacity', ratioOp.toFixed(2));
+      });
+      if (p >= 1) {
+        if (isAllZero) {
+          // オール0は縮小のみで完了
+          _restoreAnimRAF = null;
+          return;
+        }
+        // shrink完了時、確実に0にしてからgrowへ
+        ids.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('rx', '0');
+          el.setAttribute('ry', '0');
+          el.setAttribute('opacity', '0');
+        });
+        phase = 'wait'; startTs = ts;
+      }
+      _restoreAnimRAF = requestAnimationFrame(tick);
+    } else if (phase === 'wait') {
+      if (elapsed >= waitDur) { phase = 'grow'; startTs = ts; }
+      _restoreAnimRAF = requestAnimationFrame(tick);
+    } else {
+      const p = Math.min(elapsed / growDur, 1);
+      // 前半0.6: 0→peak, 後半0.4: peak→target
+      let a, b, t;
+      if (p < 0.6) {
+        const ph = p / 0.6; t = 1 - Math.pow(1 - ph, 2);
+        a = null; b = peak;
+      } else {
+        const ph = (p - 0.6) / 0.4; t = 1 - Math.pow(1 - ph, 2);
+        a = peak; b = target;
+      }
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        let rx, ry;
+        if (a === null) { rx = b[id].rx * t; ry = b[id].ry * t; }
+        else { rx = a[id].rx + (b[id].rx - a[id].rx) * t; ry = a[id].ry + (b[id].ry - a[id].ry) * t; }
+        el.setAttribute('rx', rx.toFixed(2));
+        el.setAttribute('ry', ry.toFixed(2));
+        // opacity: 目標サイズ比でフェードイン
+        const ratio = target[id].ry > 0 ? Math.min(1, ry / target[id].ry) : 1;
+        el.setAttribute('opacity', ratio.toFixed(2));
+      });
+      if (p < 1) { _restoreAnimRAF = requestAnimationFrame(tick); }
+      else { _restoreAnimRAF = null; }
+    }
+  }
+  _restoreAnimRAF = requestAnimationFrame(tick);
+}
+
 function animateLifeBarWidth(fromPct, toPct, fromFill, toFill, duration) {
   lifeBarWrap.style.transition = 'none';
   lifeBar.style.transition = 'none';
@@ -1254,6 +1494,7 @@ let _muscleAnimRAF = null;
 // 現在のDOM値を起点に、現ステータスの目標サイズまでアニメーション
 function animateMuscleGrow(duration, onComplete) {
   if (_muscleAnimRAF) cancelAnimationFrame(_muscleAnimRAF);
+  applyGradientColors(state.stats);
   const ids = Object.keys(calcMuscleSizes());
   const from = {};
   ids.forEach(id => {
@@ -1295,19 +1536,7 @@ function animateMuscleGrow(duration, onComplete) {
 
 function updateCharacter() {
   const s = state.stats;
-  const valR = (val) => val / MAX_STAT_VAL;
-  const chestR = valR(s.chest), armR = valR(s.arm), absR = valR(s.abs), legR = valR(s.leg);
-  const avgR = (chestR + armR + absR + legR) / 4;
-
-  // 筋肉の色
-  const applyColor = (id1, id2, ratio) => {
-    document.getElementById(id1).setAttribute('stop-color', lerpColor('#F0C898', '#F8DEB8', ratio));
-    document.getElementById(id2).setAttribute('stop-color', lerpColor('#F0C898', '#A85C20', ratio));
-  };
-  applyColor('muscleChestStop1', 'muscleChestStop2', chestR);
-  applyColor('muscleArmStop1',   'muscleArmStop2',   armR);
-  applyColor('muscleAbsStop1',   'muscleAbsStop2',   absR);
-  applyColor('muscleLegStop1',   'muscleLegStop2',   legR);
+  const avgR = (s.chest + s.arm + s.abs + s.leg) / 4 / MAX_STAT_VAL;
 
   // 汗
   const isTraining = !!state.activeMenu;
@@ -1403,8 +1632,8 @@ function calcLevel() {
   return Math.floor(Math.max(0, total - INITIAL_BONUS_POINTS) / 50) + 1;
 }
 
-function generateTitle() {
-  const s = state.stats;
+function generateTitle(statsArg) {
+  const s = statsArg || state.stats;
   const entries = [
     { val: s.chest, prefix: 'むね' },
     { val: s.arm,   prefix: 'うで'   },
@@ -1537,7 +1766,13 @@ function showResultCard() {
     const title = generateTitle();
     const fullTitle = title + '山本くん';
     // ハイスコア登録
-    const rank = submitScore(scoreNum, fullTitle);
+    const snapshot = {
+      level: calcLevel(),
+      maxLife: state.maxLife,
+      life: state.life,
+      stats: { chest: state.stats.chest, arm: state.stats.arm, abs: state.stats.abs, leg: state.stats.leg }
+    };
+    const rank = submitScore(scoreNum, fullTitle, snapshot);
     renderHighscores();
     const rankNumFull = ['', '１', '２', '３'][rank] || rank;
     const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : 'bronze';
@@ -1738,6 +1973,7 @@ function selectMenu(id) {
   if (state.gameOver || state.levelUpFreeze) return;
   if (state.resting) { showPopup('💤 休憩中！ライフ回復を待って！'); return; }
   if (state.life <= 0) { showPopup('❤️ ライフがありません！'); return; }
+  hideMenuHint();
   if (state.activeMenu === id) { stopTraining(); return; }
 
   stopSleepEffect();
@@ -1836,9 +2072,11 @@ function doRep(menu) {
 // SLEEP EFFECT (💤)
 // ============================================================
 let _sleepTimers = [];
+let _sleepEffectActive = false;
 
 function startSleepEffect(emoji = '💤') {
   stopSleepEffect();
+  _sleepEffectActive = true;
   const g = document.getElementById('sleep-effect');
   if (!g) return;
 
@@ -1867,7 +2105,7 @@ function startSleepEffect(emoji = '💤') {
           requestAnimationFrame(tick);
         } else {
           el.remove();
-          if (!state.activeMenu && !state.gameOver) spawnZzz(400 + Math.random() * 600);
+          if (!state.activeMenu && !state.gameOver && _sleepEffectActive) spawnZzz(400 + Math.random() * 600);
         }
       }
       requestAnimationFrame(tick);
@@ -1880,6 +2118,7 @@ function startSleepEffect(emoji = '💤') {
 }
 
 function stopSleepEffect() {
+  _sleepEffectActive = false;
   _sleepTimers.forEach(t => clearTimeout(t));
   _sleepTimers = [];
   stopDizzyEffect();
@@ -1957,16 +2196,37 @@ function stopTraining(silent = false) {
     setStatusText('休憩中…', 'resting');
     document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('disabled'));
     addLog('⏹ トレーニング停止');
-    startPassiveRegen();
     startSleepEffect();
+    startPassiveRegen();
     setTimeout(() => { if (!state.activeMenu && !state.gameOver) startSpeechLoop(SPEECHES.rest, true); }, 2000);
   }
 }
 
 // 待機中のゆるやかなライフ回復
+let _menuHintTimer = null;
+function showMenuHint() {
+  hideMenuHint();
+  _menuHintTimer = setTimeout(() => {
+    _menuHintTimer = null;
+    const el = document.getElementById('menuHint');
+    if (el) el.classList.add('show');
+  }, 5000);
+}
+function hideMenuHint() {
+  if (_menuHintTimer) { clearTimeout(_menuHintTimer); _menuHintTimer = null; }
+  const el = document.getElementById('menuHint');
+  if (el) el.classList.remove('show');
+}
+
 function startPassiveRegen() {
   if (state.passiveTicker) return;
-  if (state.life >= state.maxLife) return;
+  if (state.life >= state.maxLife) {
+    stopSleepEffect();
+    setStatusText('待機中', 'waiting');
+    startSpeechLoop(SPEECHES.ready);
+    showMenuHint();
+    return;
+  }
   state.passiveTicker = setInterval(() => {
     // トレーニング中 or 休憩中 or ゲームオーバーなら停止
     if (state.activeMenu || state.resting || state.gameOver || state.levelUpFreeze) {
@@ -1982,6 +2242,7 @@ function startPassiveRegen() {
       stopSleepEffect();
       setStatusText('待機中', 'waiting');
       startSpeechLoop(SPEECHES.ready);
+      showMenuHint();
     }
   }, 500);
 }
@@ -1990,6 +2251,7 @@ function startPassiveRegen() {
 // REST
 // ============================================================
 function startResting() {
+  hideMenuHint();
   stopTraining(true);
   state.resting = true;
   document.querySelectorAll('.menu-btn').forEach(b => {
@@ -2022,6 +2284,7 @@ function startResting() {
       addLog('✅ ライフ回復！もう一回！', true);
       showPopup('✅ ライフ回復！また頑張ろう！');
       startSpeechLoop(SPEECHES.ready);
+      showMenuHint();
     }
   }, 500);
 }
@@ -2425,6 +2688,9 @@ function gameEnd() {
     b.classList.remove('active');
     b.classList.add('disabled');
   });
+  const endBtn = document.getElementById('selfTrainEndBtn');
+  if (endBtn) endBtn.remove();
+  hideMenuHint();
   setStatusText('結果発表！', 'gameend');
   speechBubble.className = 'speech-bubble';
   speechBubble.textContent = '結果発表！';
@@ -2610,11 +2876,14 @@ function applyInitialBonus() {
 
 function enterGame(isSelfTrain) {
   state.selfTrain = isSelfTrain;
+  applyStatsToMuscles({ chest: 0, arm: 0, abs: 0, leg: 0 });
   // タイトル画面を解除するがメニューはカウントダウン中はまだ無効
   document.body.classList.remove('title-active');
   document.getElementById('menuCard').classList.add('title-disabled');
   // 歴代上位入賞者の表示を消して、トレーニングメニューに切り替え
   document.getElementById('highscoreWrap').style.display = 'none';
+  const hb = document.getElementById('charHeadBadge');
+  if (hb) hb.classList.remove('show');
   document.getElementById('menuInner').style.display = 'flex';
 
   if (isSelfTrain) {
@@ -2622,9 +2891,8 @@ function enterGame(isSelfTrain) {
     const ct = document.getElementById('countdownText');
     ct.classList.add('selftrain');
     ct.innerHTML = '<span class="countdown-days">自主トレモード</span>';
-    // 右下に終了ボタンを追加
-    addSelfTrainEndButton();
   }
+  addSelfTrainEndButton();
 
   // カウントダウン終了後にメニュー解除 & 開始
   startCountdown(() => {
@@ -2635,6 +2903,7 @@ function enterGame(isSelfTrain) {
     state.gameStarted = true;
     if (!isSelfTrain) startGameTimer(); // 自主トレは制限時間なし
     startConditionSystem();
+    showMenuHint();
   });
 }
 
@@ -2645,16 +2914,25 @@ function addSelfTrainEndButton() {
   btn.className = 'selftrain-end-btn';
   btn.textContent = '終了';
   let confirming = false;
+  let resetTimer = null;
   btn.addEventListener('click', () => {
     if (!confirming) {
       confirming = true;
       btn.classList.add('confirm');
       btn.textContent = 'もう一度押して終了';
+      resetTimer = setTimeout(() => {
+        confirming = false;
+        resetTimer = null;
+        btn.classList.remove('confirm');
+        btn.textContent = '終了';
+      }, 2000);
     } else {
+      if (resetTimer) clearTimeout(resetTimer);
       location.reload();
     }
   });
-  document.body.appendChild(btn);
+  const menuCard = document.getElementById('menuCard');
+  menuCard.insertAdjacentElement('afterend', btn);
 }
 
 document.getElementById('titleStartBtn').addEventListener('click', () => enterGame(false));
@@ -2667,6 +2945,23 @@ countdownDaysEl.textContent = state.daysLeft;
 updateLifeBar();
 updateStatBars();
 loadHighscores();
+
+// タイトル画面の歴代上位入賞者枠をトレーニングメニューと同じ高さに揃える
+function syncHighscoreHeight() {
+  const hw = document.getElementById('highscoreWrap');
+  const mi = document.getElementById('menuInner');
+  hw.style.display = 'none';
+  mi.style.display = 'flex';
+  const h = mi.offsetHeight;
+  mi.style.display = 'none';
+  hw.style.display = '';
+  if (h > 0) hw.style.minHeight = h + 'px';
+}
+syncHighscoreHeight();
+window.addEventListener('load', () => {
+  if (document.body.classList.contains('title-active')) syncHighscoreHeight();
+});
+
 // タイトル画面表示中。タイマーはスタートボタン押下後に開始される。
 </script>
 </body>

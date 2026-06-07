@@ -1274,7 +1274,9 @@ MENUS.forEach(m => {
 // ============================================================
 // lerp helper
 // ============================================================
-function lerp(a, b, t) { return a + (b - a) * Math.min(Math.max(t, 0), 1); }
+// t は下限0でクランプ（負を防ぐ）が、上限はクランプしない。
+// → muscleR が返す 1.0 超の比率（stat 87超〜最大1.62）をサイズに反映させるため。
+function lerp(a, b, t) { return a + (b - a) * Math.max(t, 0); }
 
 // 色のlerp (#RRGGBB 形式)
 function lerpColor(a, b, t) {

@@ -432,8 +432,15 @@
   }
   .menu-btn:hover { transform:translateY(-2px); box-shadow:0 6px 14px var(--shadow); }
   .menu-btn:active { transform:translateY(0); }
-  .menu-btn.active { border-color:var(--accent); background:linear-gradient(135deg,#FFF0E8,#FFE8D6); box-shadow:0 4px 14px rgba(255,107,53,0.3); }
-  .menu-btn.disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
+  .menu-btn.active { border:3px solid var(--accent); background:linear-gradient(135deg,#FFF0E8,#FFE8D6); box-shadow:0 4px 14px rgba(255,107,53,0.35); }
+  .menu-btn.active .menu-icon-img { animation:iconBounce 1.4s linear infinite; }
+  @keyframes iconBounce {
+    0%    { transform:scale(1.1) translateY(0);    animation-timing-function:cubic-bezier(0.1,0,0.3,1); }
+    19.5% { transform:scale(1.1) translateY(-6px); animation-timing-function:cubic-bezier(0.7,0,0.9,0.1); }
+    39%   { transform:scale(1.1) translateY(0); }
+    100%  { transform:scale(1.1) translateY(0); }
+  }
+  .menu-btn.disabled { cursor:not-allowed; transform:none !important; }
   .menu-icon { font-size:2rem; line-height:1; }
   .menu-icon-img {
     width: 100%;
@@ -442,6 +449,7 @@
     aspect-ratio: 1 / 1;
     object-fit: contain;
     display: block;
+    transform: scale(1.1);
   }
   .menu-name { font-weight:800; font-size:clamp(0.7rem, 2.5vw, 0.85rem); color:var(--subtext); line-height:1.1; }
   .menu-target { font-weight:700; font-size:clamp(0.58rem, 1.8vw, 0.68rem); color:var(--subtext); line-height:1.1; }
@@ -1290,9 +1298,9 @@ function muscleR(val) {
   if (val <= 70) return val / 100;
   if (val <= 100) {
     const t = (val - 70) / 30;
-    return 0.2 * t * t + 0.3 * t + 0.7; // 70→0.7、100→1.2（加速）
+    return 0.26 * t * t + 0.39 * t + 0.7; // 70→0.7、100→1.35
   }
-  return Math.min(1.35, 1.2 + (val - 100) / 200);
+  return Math.min(1.62, 1.35 + (val - 100) * 0.009); // 100→1.35、130→1.62
 }
 
 function calcMuscleSizes() {
